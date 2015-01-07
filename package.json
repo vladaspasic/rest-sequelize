@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "description": "REST Service using Sequelize ORM",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/vladaspasic/rest-sequelize.git"
+  },
   "scripts": {
     "prepublish": "npm prune",
     "test": "make test",
