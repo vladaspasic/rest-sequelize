@@ -199,6 +199,35 @@ describe('REST', function() {
 				})
 				.end(done);
 		});
+
+		it('should create a new Task with association', function(done) {
+			request(server.app)
+				.post('/tasks')
+				.send({
+					name: 'New Task',
+					User: {
+						name: 'Task Owner',
+						email: 'foo@bar.com'
+					}
+				})
+				.expect(201)
+				.expect(function(res) {
+					expect(res.body).to.have.property('result');
+					expect(res.body).to.have.property('meta');
+
+					expect(res.body.result).to.have.property('name', 'New Task');
+					expect(res.body.result.User).to.have.property('name', 'Task Owner');
+					expect(res.body.result.User).to.have.property('email', 'foo@bar.com');
+				})
+				.end(done);
+		});
+
+		it('should throw bad request', function(done) {
+			request(server.app)
+				.post('/users')
+				.expect(400)
+				.end(done);
+		});
 	});
 
 	describe('#update', function() {
@@ -271,6 +300,16 @@ describe('REST', function() {
 				})
 				.end(done);
 		});
+
+		it('should throw model not found', function(done) {
+			request(server.app)
+				.put('/users/10')
+				.send({
+					name: 'Foo Bar Foo'
+				})
+				.expect(404)
+				.end(done);
+		});
 	});
 
 	describe('#delete', function() {
@@ -288,12 +327,19 @@ describe('REST', function() {
 					}, done);
 				});
 		});
+
+		it('should throw model not found', function(done) {
+			request(server.app)
+				.del('/users/10')
+				.expect(400)
+				.end(done);
+		});
 	});
 
 	// Delete the database file, just in case :)
 	after(function(done) {
 		require('fs').unlink(__dirname + '/database.sqlite', function(error) {
-			if(error) {
+			if (error) {
 				console.error('Could not delete database.sqlite file', error);
 			} else {
 				console.error('Deleted database.sqlite file');

@@ -29,6 +29,12 @@ app.post('/users', function(req, res, next) {
 	}, next);
 });
 
+app.post('/tasks', function(req, res, next) {
+	Adapter.create('tasks', req.body).then(function(task) {
+		return res.status(201).json(task);
+	}, next);
+});
+
 app.put('/users/:id', function(req, res, next) {
 	Adapter.update('users', req.params.id, req.body).then(function(user) {
 		return res.json(user);
