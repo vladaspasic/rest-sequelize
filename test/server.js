@@ -4,55 +4,68 @@ var Sequelize = require('sequelize'),
 	models = require('./models'),
 	rest = require('..');
 
-var sequelize = new Sequelize('database', 'user', 'pass', {
-	dialect: 'sqlite',
-	storage: __dirname + '/database.sqlite'
-});
+function connect() {
+	var sequelize = new Sequelize('database', 'user', 'pass', {
+		dialect: 'sqlite',
+		storage: __dirname + '/database.sqlite'
+	});
 
-var Models = models(sequelize);
+	var Models = models(sequelize);
 
-var app = express();
+	return {
+		sequelize: sequelize,
+		models: Models,
+		Sequelize: Sequelize
+	};
+}
 
-app.use(parser.json());
+module.exports.createServer = function() {
+	var DB = connect();
+	var app = express();
 
-var Adapter = rest(sequelize);
+	app.use(parser.json());
 
-app.get('/users', function(req, res, next) {
-	Adapter.find('users', req.query).then(function(users) {
-		return res.json(users);
-	}, next);
-});
+	var Adapter = rest(DB.sequelize);
 
-app.post('/users', function(req, res, next) {
-	Adapter.create('users', req.body).then(function(user) {
-		return res.status(201).json(user);
-	}, next);
-});
+	app.get('/users', function(req, res, next) {
+		Adapter.find('users', req.query).then(function(users) {
+			return res.json(users);
+		}, next);
+	});
 
-app.post('/tasks', function(req, res, next) {
-	Adapter.create('tasks', req.body).then(function(task) {
-		return res.status(201).json(task);
-	}, next);
-});
+	app.post('/users', function(req, res, next) {
+		Adapter.create('users', req.body).then(function(user) {
+			return res.status(201).json(user);
+		}, next);
+	});
 
-app.put('/users/:id', function(req, res, next) {
-	Adapter.update('users', req.params.id, req.body).then(function(user) {
-		return res.json(user);
-	}, next);
-});
+	app.post('/tasks', function(req, res, next) {
+		Adapter.create('tasks', req.body).then(function(task) {
+			return res.status(201).json(task);
+		}, next);
+	});
 
-app.delete('/users/:id', function(req, res, next) {
-	Adapter.delete('users', req.params.id).then(function() {
-		return res.status(204).send();
-	}, next);
-});
+	app.put('/users/:id', function(req, res, next) {
+		Adapter.update('users', req.params.id, req.body).then(function(user) {
+			return res.json(user);
+		}, next);
+	});
 
-app.use(function(error, req, res, next) {
-	console.log(error.stackTrace());
+	app.delete('/users/:id', function(req, res, next) {
+		Adapter.delete('users', req.params.id).then(function() {
+			return res.status(204).send();
+		}, next);
+	});
 
-	return res.status(error.statusCode || 500).json(error);
-});
+	app.use(function(error, req, res, next) {
+		console.log(error.stackTrace());
 
-module.exports.Sequelize = Sequelize;
-module.exports.sequelize = sequelize;
-module.exports.app = app;
+		return res.status(error.statusCode || 500).json(error);
+	});
+
+	DB.app = app;
+
+	return DB;
+};
+
+module.exports.connect = connect;

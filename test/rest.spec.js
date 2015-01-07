@@ -1,7 +1,7 @@
 /* jshint undef: false */
 var chai = require('chai'),
 	request = require('supertest'),
-	server = require('./server'),
+	server = require('./server').createServer(),
 	assert = chai.assert,
 	expect = chai.expect;
 

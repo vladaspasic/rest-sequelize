@@ -1,4 +1,4 @@
-var models = ['Task', 'User'];
+var models = ['Task', 'User', "Foo"];
 
 module.exports = function(sequelize) {
 	var Models = {};
@@ -10,7 +10,9 @@ module.exports = function(sequelize) {
 	models.forEach(function(name) {
 		var Model = Models[name];
 
-		Model.associate(Models);
+		if(typeof Model.associate === 'function') {
+			Model.associate(Models);
+		}
 	});
 
 	return Models;
