@@ -148,6 +148,15 @@ describe('RestService', function() {
 			expect(promise).to.eventually.have.property("id", 1).notify(done);
 		});
 
+		it('should reject as the related model does not exist', function() {
+			var promise = Service.persist(User, {
+				name: 'New User',
+				Tasks: [5]
+			});
+
+			return assert.isRejected(promise);
+		});
+
 	});
 
 	describe('#populate', function() {
