@@ -25,6 +25,7 @@ describe('RestAdapter', function() {
 			var service = Adapter.serviceFor('users');
 
 			assert.instanceOf(service, RestService, 'Should be an instance of RestService');
+			assert.deepEqual(service, Adapter.serviceFor('users'), 'Service should be equal.');
 		});
 
 		it('should resolve Foo service', function() {
@@ -32,6 +33,7 @@ describe('RestAdapter', function() {
 
 			assert.instanceOf(service, FooService, 'Should be an instance of FooService');
 			assert.instanceOf(service, RestService, 'Should be an instance of RestService');
+			assert.deepEqual(service, Adapter.serviceFor('foos'), 'Service should be equal.');
 		});
 
 		it('should throw error', function() {
@@ -54,18 +56,20 @@ describe('RestAdapter', function() {
 	});
 
 	describe('#modelFor', function() {
-		it('should resolve a model', function() {
-			var model = Adapter.modelFor('users');
+		it('should resolve a model as a String', function() {
+			var msg = 'Should be an instance of a Model';
+			assert.instanceOf(User, database.Sequelize.Model, msg);
+			assert.instanceOf(Task, database.Sequelize.Model, msg);
 
-			assert.instanceOf(model, database.Sequelize.Model, 'Should be an instance of a Model');
+			assert.equal(User, User, msg);
+			assert.equal(Task, Task, msg);
+		});
 
-			model = Adapter.modelFor('tasks');
-
-			assert.instanceOf(model, database.Sequelize.Model, 'Should be an instance of a Model');
-
-			model = Adapter.modelFor('foos');
-
-			assert.instanceOf(model, database.Sequelize.Model, 'Should be an instance of a Model');
+		it('should resolve a model as a Model', function() {
+			var msg = 'Should be an instance of a Model';
+			assert.instanceOf(Adapter.modelFor('users'), database.Sequelize.Model, msg);
+			assert.instanceOf(Adapter.modelFor('TASKS'), database.Sequelize.Model, msg);
+			assert.instanceOf(Adapter.modelFor('FoOs'), database.Sequelize.Model, msg);
 		});
 
 		it('should throw error', function() {
@@ -75,19 +79,19 @@ describe('RestAdapter', function() {
 
 			assert.throw(function() {
 				Adapter.modelFor(function() {});
-			}, 'Type must be a String. You passed a `function`.');
+			}, 'Type must be a String or a Sequelize Model. You passed a `function`.');
 
 			assert.throw(function() {
 				Adapter.modelFor(1);
-			}, 'Type must be a String. You passed a `number`.');
+			}, 'Type must be a String or a Sequelize Model. You passed a `number`.');
 
 			assert.throw(function() {
 				Adapter.modelFor({});
-			}, 'Type must be a String. You passed a `object`.');
+			}, 'Type must be a String or a Sequelize Model. You passed a `object`.');
 
 			assert.throw(function() {
 				Adapter.modelFor([]);
-			}, 'Type must be a String. You passed a `object`.');
+			}, 'Type must be a String or a Sequelize Model. You passed a `object`.');
 		});
 	});
 
@@ -101,10 +105,20 @@ describe('RestAdapter', function() {
 
 	describe('#create', function() {
 
+		it('should create model', function() {
+
+		});
+
 	});
 
 	describe('#update', function() {
+		it('should update model', function() {
 
+		});
+
+		it('should update model without id', function() {
+
+		});
 	});
 
 	describe('#delete', function() {

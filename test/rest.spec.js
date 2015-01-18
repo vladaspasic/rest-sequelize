@@ -9,7 +9,9 @@ describe('REST', function() {
 
 	before(function(done) {
 		server.sequelize.drop().then(function() {
-			return server.sequelize.sync().then(function() {
+			return server.sequelize.sync({
+				force: true
+			}).then(function() {
 				done();
 			});
 		}, done);
@@ -230,6 +232,104 @@ describe('REST', function() {
 		});
 	});
 
+	describe('#findSubResource', function() {
+
+		it('should fetch subResource', function(done) {
+			server.models.Task.create({
+				name: 'SubTask',
+				UserId: 1
+			}).then(function(task) {
+				request(server.app)
+					.get('/users/1/tasks')
+					.expect(200)
+					.expect(function(res) {
+						expect(res.body).to.have.property('result');
+						expect(res.body).to.have.property('meta');
+
+						assert.lengthOf(res.body.result, 1, 'Should have 1 Task');
+						expect(res.body.result[0]).to.have.property('name', 'SubTask');
+					}).end(function(error) {
+						task.destroy().then(function() {
+							done(error);
+						}, done);
+					});
+			}, done);
+		});
+
+	});
+
+	describe('#findSubResource', function() {
+
+		it('should fetch one subResource', function(done) {
+			server.models.Task.create({
+				name: 'SubTask',
+				UserId: 1
+			}).then(function(task) {
+				request(server.app)
+					.get('/users/1/tasks/' + task.id)
+					.expect(200)
+					.expect(function(res) {
+
+						expect(res.body).to.have.property('result');
+						expect(res.body).to.have.property('meta');
+
+						expect(res.body.result).to.have.property('id', task.id);
+						expect(res.body.result).to.have.property('name', 'SubTask');
+					}).end(function(error) {
+						task.destroy().then(function() {
+							done(error);
+						}, done);
+					});
+			}, done);
+		});
+
+	});
+
+	describe('#createSubResources', function() {
+
+		it('should create subResources', function(done) {
+			request(server.app)
+				.put('/users/1/tasks')
+				.send([{
+					name: 'Foo Bar Foo Task'
+				}, {
+					name: 'Foo Bar Foo Task Task'
+				}])
+				.expect(200)
+				.expect(function(res) {
+						expect(res.body.result).to.have.length(2);
+						expect(res.body.result[0]).to.have.property('name', 'Foo Bar Foo Task');
+						expect(res.body.result[1]).to.have.property('name', 'Foo Bar Foo Task Task');
+				})
+				.end(done);
+		});
+
+	});
+
+	describe('#deleteSubResources', function() {
+
+		it('should delete subResource with query params', function(done) {
+			request(server.app)
+				.del('/users/1/tasks/?id=4')
+				.expect(200)
+				.expect(function(res) {
+					assert.deepEqual(res.body, 1);
+				})
+				.end(done);
+		});
+
+		it('should delete subResource with id', function(done) {
+			request(server.app)
+				.del('/users/1/tasks/3')
+				.expect(200)
+				.expect(function(res) {
+					assert.deepEqual(res.body, 1);
+				})
+				.end(done);
+		});
+
+	});
+
 	describe('#update', function() {
 		it('should update model', function(done) {
 			request(server.app)
@@ -241,9 +341,6 @@ describe('REST', function() {
 				.expect(function(res) {
 					expect(res.body).to.have.property('result');
 					expect(res.body).to.have.property('meta');
-
-					expect(res.body.result).to.have.property('name', 'Foo Bar Foo');
-					expect(res.body.result).to.have.property('email', 'foo@bar.com');
 				})
 				.end(done);
 		});
@@ -294,7 +391,9 @@ describe('REST', function() {
 					expect(result).to.have.property('name', 'Foo Bar Foo');
 					expect(result).to.have.property('email', 'Foo@Bar.com');
 
-					assert.lengthOf(result.Tasks, 2, 'Should have 1 Task');
+					console.log(result);
+
+					assert.lengthOf(result.Tasks, 2, 'Should have 2 Tasks');
 					expect(result.Tasks[1]).to.have.property('name', 'Foo\'s new Task');
 					expect(result.Tasks[0]).to.have.property('name', 'Foo\'s Task');
 				})

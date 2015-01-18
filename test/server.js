@@ -2,7 +2,8 @@ var Sequelize = require('sequelize'),
 	express = require('express'),
 	parser = require('body-parser'),
 	models = require('./models'),
-	rest = require('..');
+	rest = require('..'),
+	Models = {};
 
 function connect() {
 	var sequelize = new Sequelize('database', 'user', 'pass', {
@@ -10,7 +11,7 @@ function connect() {
 		storage: __dirname + '/database.sqlite'
 	});
 
-	var Models = models(sequelize);
+	Models = models(sequelize);
 
 	return {
 		sequelize: sequelize,
@@ -28,7 +29,43 @@ module.exports.createServer = function() {
 	var Adapter = rest(DB.sequelize);
 
 	app.get('/users', function(req, res, next) {
-		Adapter.find('users', req.query).then(function(users) {
+		Adapter.find(Models.User, req.query).then(function(users) {
+			return res.json(users);
+		}, next);
+	});
+
+	app.get('/users/:id', function(req, res, next) {
+		Adapter.find('users', req.params.id).then(function(user) {
+			return res.json(user);
+		}, next);
+	});
+
+	app.get('/users/:id/:sub', function(req, res, next) {
+		Adapter.findSubResources('users', req.params.id, req.params.sub, req.query).then(function(users) {
+			return res.json(users);
+		}, next);
+	});
+
+	app.put('/users/:id/:sub', function(req, res, next) {
+		Adapter.createSubResources('users', req.params.id, req.params.sub, req.body).then(function(users) {
+			return res.json(users);
+		}, next);
+	});
+
+	app.del('/users/:id/:sub', function(req, res, next) {
+		Adapter.deleteSubResources('users', req.params.id, req.params.sub, req.query).then(function(users) {
+			return res.json(users);
+		}, next);
+	});
+
+	app.del('/users/:id/:sub/:subId', function(req, res, next) {
+		Adapter.deleteSubResources('users', req.params.id, req.params.sub, req.params.subId).then(function(users) {
+			return res.json(users);
+		}, next);
+	});
+
+	app.get('/users/:id/:sub/:subId', function(req, res, next) {
+		Adapter.findSubResourceById('users', req.params.id, req.params.sub, req.params.subId).then(function(users) {
 			return res.json(users);
 		}, next);
 	});

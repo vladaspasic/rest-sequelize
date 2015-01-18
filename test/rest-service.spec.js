@@ -110,6 +110,45 @@ describe('RestService', function() {
 
 	});
 
+	describe('#deleteAll', function() {
+
+		it('should delete all models with a query', function(done) {
+			User.bulkCreate([{
+				name: 'to be deleted'
+			}, {
+				name: 'to be deleted'
+			}, {
+				name: 'to be deleted'
+			}]).then(function() {
+				return Service.deleteAll(User, {
+					where: {
+						name: 'to be deleted'
+					}
+				}).then(function(rows) {
+					User.findAll({
+						where: {
+							name: 'to be deleted'
+						}
+					}).then(function(users) {
+						assert.strictEqual(rows, 3, '3 Records should be deleted.');
+						expect(users).to.be.empty;
+						done();
+					});
+				});
+			}, done);
+		});
+
+		it('should be fulfilled with 0 rows affected', function(done) {
+			Service.deleteAll(User, {
+				where: {id: 100}
+			}).then(function(rows) {
+				assert.strictEqual(rows, 0, '0 Records should be deleted.');
+				done();
+			}, done);
+		});
+
+	});
+
 	describe('#persist', function() {
 
 		it('should persist new model', function(done) {
