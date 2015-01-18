@@ -131,7 +131,9 @@ describe('REST', function() {
 		});
 
 		afterEach(function(done) {
-			server.sequelize.models.User.destroy().then(function() {
+			server.sequelize.models.User.destroy({
+				where: {}
+			}).then(function() {
 				done();
 			}, done);
 		});
@@ -390,8 +392,6 @@ describe('REST', function() {
 
 					expect(result).to.have.property('name', 'Foo Bar Foo');
 					expect(result).to.have.property('email', 'Foo@Bar.com');
-
-					console.log(result);
 
 					assert.lengthOf(result.Tasks, 2, 'Should have 2 Tasks');
 					expect(result.Tasks[1]).to.have.property('name', 'Foo\'s new Task');
