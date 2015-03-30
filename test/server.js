@@ -2,7 +2,7 @@ var Sequelize = require('sequelize'),
 	express = require('express'),
 	parser = require('body-parser'),
 	models = require('./models'),
-	rest = require('..'),
+	RestSequelize = require('..'),
 	Models = {};
 
 function connect() {
@@ -26,7 +26,9 @@ module.exports.createServer = function() {
 
 	app.use(parser.json());
 
-	var Adapter = rest(DB.sequelize);
+	var Adapter = RestSequelize.RestAdapter.create({
+		sequelize: DB.sequelize
+	});
 
 	app.get('/users', function(req, res, next) {
 		Adapter.find(Models.User, req.query).then(function(users) {

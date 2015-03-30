@@ -9,8 +9,9 @@ chai.use(chaiAsPromised);
 var assert = chai.assert,
 	expect = chai.expect;
 
-var Service = new RestService(database.sequelize),
-	User = database.models.User,
+var Service = RestService.create({
+	sequelize: database.sequelize
+}), User = database.models.User,
 	Task = database.models.Task;
 
 describe('RestService', function() {
@@ -247,7 +248,9 @@ describe('RestService', function() {
 					createAssociation: 'bar'
 				});
 
-				var service = new MyService(database.sequelize);
+				var service = MyService.create({
+					sequelize: database.sequelize
+				});
 
 				service.resolveAssociationHandler('Bar');
 			}, 'Can not find Association Handler for keys `[createBarAssociation, createAssociation]`.');

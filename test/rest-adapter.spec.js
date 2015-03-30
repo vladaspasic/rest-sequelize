@@ -11,10 +11,9 @@ var assert = chai.assert,
 	expect = chai.expect,
 	FooService = RestService.extend({});
 
-var Adapter = new RestAdapter(database.sequelize, {
-	'foos': FooService
-}),
-	User = database.models.User,
+var Adapter = RestAdapter.create({
+	sequelize: database.sequelize
+}), User = database.models.User,
 	Task = database.models.Task;
 
 describe('RestAdapter', function() {
@@ -31,7 +30,6 @@ describe('RestAdapter', function() {
 		it('should resolve Foo service', function() {
 			var service = Adapter.serviceFor('foos');
 
-			assert.instanceOf(service, FooService, 'Should be an instance of FooService');
 			assert.instanceOf(service, RestService, 'Should be an instance of RestService');
 			assert.deepEqual(service, Adapter.serviceFor('foos'), 'Service should be equal.');
 		});
@@ -75,7 +73,7 @@ describe('RestAdapter', function() {
 		it('should throw error', function() {
 			assert.throw(function() {
 				Adapter.modelFor('bars');
-			}, 'Could not find Model with type `bars`.');
+			}, 'Could not find Model for type `bars`.');
 
 			assert.throw(function() {
 				Adapter.modelFor(function() {});
