@@ -1,4 +1,4 @@
-var RestService = require('../lib/rest-service');
+var RestService = require('../../../lib/rest-service');
 
 module.exports = RestService.extend({
 
