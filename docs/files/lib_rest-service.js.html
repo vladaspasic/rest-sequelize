@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>rest-sequelize by vladaspasic</title>
+
+    <link rel="stylesheet" href="../stylesheets/styles.css">
+    <link rel="stylesheet" href="../stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" href="">
+    <link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/lucid.css">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body class="yui3-skin-sam">
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <a href="http://vladaspasic.github.io/rest-sequelize">
+            <h1 class="brand" style="padding: 10px 16px 10px; height: 20px; line-height: 20px; margin-left: 0;">
+                Rest Sequelize
+            </h1>
+        </a>
+    <div class="nav">
+            <li class="divider-vertical"></li>
+            <li>
+                <p class="navbar-text">
+                    Rest Sequelize: Restfull wrapper built around the Sequelize ORM
+                </p>
+            </li>
+        </div>
+        <form class="navbar-form pull-right" style="line-height: 40px; height: 40px;">
+            <input style="margin-top: 0;" type="text" class="search-query" placeholder="Search for classes/modules..." data-obj='["classes/RestSequelize.Deserializer", "classes/RestSequelize.Object", "classes/RestSequelize.Resolver", "classes/RestSequelize.RestAdapter", "classes/RestSequelize.RestService", "classes/RestSequelize.Serializer", "modules/rest-sequelize"]'>
+        </form>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="span3" id='sidebar-left'>
+            <div class='repo-info'>
+
+                <p>Version: 0.0.1</p>
+
+                <p class="view"><a href="https://github.com/vladaspasic/rest-sequelize">View the Project on GitHub <small>vladaspasic/rest-sequelize</small></a></p>
+
+
+                <ul>
+                  <li><a href="https://github.com/vladaspasic/rest-sequelize/zipball/master">Download <strong>ZIP File</strong></a></li>
+                  <li><a href="https://github.com/vladaspasic/rest-sequelize/tarball/master">Download <strong>TAR Ball</strong></a></li>
+                  <li><a href="https://github.com/vladaspasic/rest-sequelize">View On <strong>GitHub</strong></a></li>
+                </ul>
+            </div>
+
+           <div>
+               <div id="sidebar">
+               <div id="classes">
+                   <ul id="api-classes" class="nav nav-list">
+                   	<li class="nav-header">Classes</li>
+                           <li><a href="../classes/RestSequelize.Deserializer.html">RestSequelize.Deserializer</a></li>
+                           <li><a href="../classes/RestSequelize.Object.html">RestSequelize.Object</a></li>
+                           <li><a href="../classes/RestSequelize.Resolver.html">RestSequelize.Resolver</a></li>
+                           <li><a href="../classes/RestSequelize.RestAdapter.html">RestSequelize.RestAdapter</a></li>
+                           <li><a href="../classes/RestSequelize.RestService.html">RestSequelize.RestService</a></li>
+                           <li><a href="../classes/RestSequelize.Serializer.html">RestSequelize.Serializer</a></li>
+                       <li class="divider"></li>
+                   </ul>
+               </div>
+               </div>
+           </div>
+        </div>
+        <div class="span9 offset3">
+                <form id="options-form" class="form-inline pull-right">
+                    Show:
+                    <label for="api-show-inherited" class="checkbox">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected" class="checkbox">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private" class="checkbox">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated" class="checkbox">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </form>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <div class="page-header">
+                            <h1>lib/rest-service.js <small>File</small></h1>
+                        </div>
+                        
+                        <div class="file">
+                            <pre class="prettyprint linenums">
+                        &quot;use strict&quot;;
+                        
+                        var CoreObject = require(&#x27;./core&#x27;),
+                        	_ = require(&#x27;lodash&#x27;),
+                        	when = require(&#x27;when&#x27;),
+                        	keys = require(&#x27;when/keys&#x27;),
+                        	errors = require(&#x27;error-globals&#x27;),
+                        	sequence = require(&#x27;when/sequence&#x27;),
+                        	parallel = require(&#x27;when/parallel&#x27;);
+                        
+                        /**
+                         * Rest Service for handling Model Persistance logic. Can have
+                         * multiple implementations for each Model type.
+                         *
+                         * @class RestService
+                         * @extends RestSequelize.Object
+                         * @namespace RestSequelize
+                         */
+                        var RestService = CoreObject.extend({
+                        	init: function() {
+                        		if(!this.sequelize) {
+                        			throw new Error(&#x27;You must define a sequelize property on the RestService.&#x27;);
+                        		}
+                        	},
+                        	/**
+                        	 * Find a list of Models with all thier
+                        	 * associations for a specific query and
+                        	 * count them.
+                        	 *
+                        	 * @method find
+                        	 * @param  {String}  type
+                        	 * @param  {Object}  query
+                        	 * @return {Promise}
+                        	 */
+                        	find: function(model, query) {
+                        		query = this.populate(model, query || {});
+                        
+                        		return keys.all({
+                        			rows: model.findAll(query),
+                        			count: model.count({
+                        				where: query.where
+                        			})
+                        		});
+                        	},
+                        
+                        	/**
+                        	 * Find one Model with all its associations
+                        	 * for a specific query.
+                        	 *
+                        	 * @method findOne
+                        	 * @param  {String}  type
+                        	 * @param  {Object}  query
+                        	 * @return {Promise}
+                        	 */
+                        	findOne: function(model, query) {
+                        		query = this.populate(model, query);
+                        
+                        		return model.findOne(query).then(function(instance) {
+                        			if (!instance) {
+                        				return when.reject(new errors.NotFoundError(&#x27;Can not find model &#x60;%s&#x60;.&#x27;, model.name));
+                        			}
+                        
+                        			return instance;
+                        		});
+                        	},
+                        
+                        	findSubResources: function(model, id, subResource, query) {
+                        		return resolveSubresourceInstance(model, id, subResource).then(function(result) {
+                        			var accessor = resolveAccessorMethod(result.instance, result.association, &#x27;get&#x27;);
+                        
+                        			return accessor.call(result.instance, query);
+                        		});
+                        	},
+                        
+                        	createSubResources: function(model, id, subResource, data) {
+                        		return this.transaction(function(transaction, commit, rollback) {
+                        			return resolveSubresourceInstance(model, id, subResource).then(function(result) {
+                        				var toUpdate = [],
+                        					toCreate = [];
+                        
+                        				var createAccessor = resolveAccessorMethod(result.instance, result.association, &#x27;create&#x27;),
+                        					updateAccessor = resolveAccessorMethod(result.instance, result.association, &#x27;addMultiple&#x27;),
+                        					options = {
+                        						transaction: transaction
+                        					};
+                        
+                        				function resolveEntry(entry) {
+                        					if (entry.id !== undefined) {
+                        						toUpdate.push(entry);
+                        					} else {
+                        						toCreate.push(createAccessor.call(result.instance, entry, options));
+                        					}
+                        				}
+                        
+                        				if (_.isArray(data)) {
+                        					_.each(data, resolveEntry);
+                        				} else if (_.isObject(data)) {
+                        					resolveEntry(data);
+                        				} else {
+                        					return when.reject(new errors.BadRequestError(&#x27;Invalid data sent to the server.&#x27;));
+                        				}
+                        
+                        				return keys.all({
+                        					updated: updateAccessor.call(result.instance, toUpdate, options),
+                        					created: when.all(toCreate)
+                        				}).then(commit, rollback);
+                        			});
+                        		}).then(function(data) {
+                        			// merge data from mapped promise
+                        			return _.union(data.updated, data.created);
+                        		});
+                        	},
+                        
+                        	deleteSubResources: function(model, id, subResource, query) {
+                        		var service = this;
+                        
+                        		return resolveSubresourceInstance(model, id, subResource).then(function(result) {
+                        			query.where[result.association.identifierField] = id;
+                        
+                        			return service.deleteAll(subResource, query);
+                        		});
+                        	},
+                        
+                        	/**
+                        	 * Delete the model for the given id.
+                        	 *
+                        	 * @method delete
+                        	 * @param  {String}  type
+                        	 * @param  {Number}  id
+                        	 * @return {Promise}
+                        	 */
+                        	delete: function(model, id) {
+                        		return model.findOne(id).then(function(instance) {
+                        			if (!instance) {
+                        				return when.reject(new errors.BadRequestError(&#x27;Can not delete model &#x60;%s&#x60; with id &#x60;%s&#x60; as it does not exists.&#x27;, model.name, id));
+                        			}
+                        
+                        			return instance.destroy();
+                        		});
+                        	},
+                        
+                        	/**
+                        	 * Delete all models for the given query.
+                        	 *
+                        	 * This request is executed with a transaction, as it is considered
+                        	 * as a delicate one.
+                        	 *
+                        	 * @method deleteAll
+                        	 * @param  {String}  type
+                        	 * @param  {Object}  query
+                        	 * @return {Promise}
+                        	 */
+                        	deleteAll: function(model, query) {
+                        		return this.transaction(function(transaction, commit, rollback) {
+                        			if (query === undefined) {
+                        				query = {};
+                        			}
+                        
+                        			query.transaction = transaction;
+                        
+                        			return model.destroy(query).then(commit, rollback);
+                        		});
+                        	},
+                        
+                        	/**
+                        	 * Create a new Transaction. The rollback method is wrapped inside
+                        	 * an internal function for easier managment of unexpected Errors that
+                        	 * may occur during that process.
+                        	 *
+                        	 * This method returns a Promise which is resolved when the transaction is
+                        	 * commited successfully.
+                        	 *
+                        	 * When transaction is rollbacked, it returns a unresolved promise. If the
+                        	 * transaction could not be rollbacked, a DatabaseError is returned as a reason.
+                        	 *
+                        	 * @method transaction
+                        	 * @param  {Function} callback
+                        	 * @return {Promise}
+                        	 */
+                        	transaction: function(callback) {
+                        		var sequelize = this.sequelize;
+                        
+                        		return when.promise(function(resolve, reject) {
+                        			sequelize.transaction().then(function(t) {
+                        
+                        				// Rollback transaction
+                        				function rollback(error) {
+                        					t.rollback().then(function() {
+                        						return reject(error);
+                        					}, function(e) {
+                        						return reject(new errors.DatabaseError(e, &#x27;Transaction rollback failure&#x27;));
+                        					});
+                        				}
+                        
+                        				// Commit transaction
+                        				function commit(result) {
+                        					t.commit().then(function() {
+                        						return resolve(result);
+                        					}, reject);
+                        				}
+                        
+                        				if (typeof callback.then === &#x27;function&#x27;) {
+                        					callback.then(commit, rollback);
+                        				}
+                        
+                        				callback(t, commit, rollback);
+                        			});
+                        		});
+                        	},
+                        
+                        	/**
+                        	 * Include the related records for the given model in the Query.
+                        	 *
+                        	 * @method populate
+                        	 * @param  {Model} model
+                        	 * @param  {Query} query
+                        	 * @return {Query}
+                        	 */
+                        	populate: function(model, query) {
+                        		if (!model.associations) {
+                        			return query;
+                        		}
+                        
+                        		if (!_.isArray(query.include)) {
+                        			query.include = [];
+                        		}
+                        
+                        		_.each(model.associations, function(association) {
+                        			query.include.push({
+                        				model: association.target,
+                        				as: association.as
+                        			});
+                        		}, this);
+                        
+                        		return query;
+                        	},
+                        
+                        	/**
+                        	 * Persist the Model with all his Associations to the Database.
+                        	 *
+                        	 * @method persist
+                        	 * @param  {Model}  model
+                        	 * @param  {Object} data
+                        	 * @return {Promise}
+                        	 */
+                        	persist: function persist(model, data) {
+                        		var tasks = [],
+                        			instance = model.build(data, {
+                        				isNewRecord: !data.id
+                        			});
+                        
+                        		// Add the task, which will persist the model
+                        		tasks.push(function(transaction) {
+                        			return instance.save({
+                        				validate: !!data.id,
+                        				transaction: transaction
+                        			});
+                        		});
+                        
+                        		// Resolve association data
+                        		_.each(model.associations, function(association) {
+                        			var type = association.associationType,
+                        				handler = &#x27;persist&#x27; + type;
+                        
+                        			if (typeof this[handler] === &#x27;function&#x27;) {
+                        				var task = this[handler].call(this, association, instance, data);
+                        
+                        				if (typeof task === &#x27;function&#x27;) {
+                        					if (type === &#x27;BelongsTo&#x27;) {
+                        						tasks.unshift(task);
+                        					} else {
+                        						tasks.push(task);
+                        					}
+                        				}
+                        			}
+                        		}, this);
+                        
+                        		return executeTasks(this, tasks, instance);
+                        	},
+                        
+                        	/**
+                        	 * Persists the &#x60;BelongsTo&#x60; Association type. If the request contains the data
+                        	 * with the association name, it will be either created or updated, depending
+                        	 * if the data contained the primary key.
+                        	 *
+                        	 * This method returns a Function which will be executed before the model is
+                        	 * persisted in the Database. Function accepts a current Database Transacation
+                        	 * argument.
+                        	 *
+                        	 * @method persistBelongsTo
+                        	 * @param  {Association} association
+                        	 * @param  {Model}       model
+                        	 * @param  {Object}      data
+                        	 * @return {Function}
+                        	 */
+                        	persistBelongsTo: function persistBelongsTo(association, model, data) {
+                        		// return if the data is empty
+                        		if (_.isEmpty(data[association.as])) {
+                        			return;
+                        		}
+                        
+                        		return function(transaction) {
+                        			var hash = data[association.as];
+                        
+                        			if (!isNaN(hash)) {
+                        				model.set(association.identifier, hash);
+                        				return when.resolve(model);
+                        			}
+                        
+                        			// Execute the create/update and assign the foreign keys
+                        			return this.persistAssociation(association, hash).call(this, transaction).then(function(record) {
+                        				var key = association.target.primaryKeyAttribute;
+                        				model.set(association.identifier, hash[key] || record.get(key));
+                        				return model;
+                        			});
+                        		}.bind(this);
+                        	},
+                        
+                        	/**
+                        	 * Persits the &#x60;HasMany&#x60; Association type. If the request contains the list
+                        	 * of records which matches the Association name, they will be created or updated,
+                        	 * depending if the data contained the primary key.
+                        	 *
+                        	 * This method returns a Function which will be executed after the model is
+                        	 * persisted in the Database. Function accepts a current Database Transacation
+                        	 * argument.
+                        	 *
+                        	 * @method persistHasMany
+                        	 * @param  {Association} association
+                        	 * @param  {Model}       model
+                        	 * @param  {Object}      data
+                        	 * @return {Function}
+                        	 */
+                        	persistHasMany: function persistHasMany(association, model, data) {
+                        		// return if the data is empty
+                        		if (_.isEmpty(data[association.as])) {
+                        			return;
+                        		}
+                        
+                        		var records = data[association.as];
+                        
+                        		if (_.isArray(records)) {
+                        
+                        			// Create an Array of tasks to be exexuted
+                        			var tasks = _.map(records, function(hash) {
+                        				return function(transaction) {
+                        
+                        					if (!isNaN(hash)) {
+                        						return model[association.accessors.set]([hash]);
+                        					}
+                        
+                        					// Set the foreignKey to the primary key of the association
+                        					hash[association.identifier] = model.get(association.source.primaryKeyAttribute);
+                        
+                        					// Execute the create/update
+                        					return this.persistAssociation(association, hash).call(this, transaction);
+                        				}.bind(this);
+                        			}, this);
+                        
+                        			return function(transaction) {
+                        				return parallel(tasks, transaction);
+                        			};
+                        		}
+                        	},
+                        
+                        	/**
+                        	 * Resolves and executes the persistance of the Association. First it will
+                        	 * try to resolve is there a specific persitance handler for this Association
+                        	 * Model type, and then tries to execute it inside a Transaction.
+                        	 *
+                        	 * This method returns a Function that is returning a Promise. Function
+                        	 * accepts a Transaction argument.
+                        	 *
+                        	 * @method persistAssociation
+                        	 * @param  {Association} association
+                        	 * @param  {Object}      hash
+                        	 * @return {Function}
+                        	 */
+                        	persistAssociation: function persistAssociation(association, hash) {
+                        		var model = association.target,
+                        			id = hash[model.primaryKeyAttribute];
+                        
+                        		// Should we create or update the associated model
+                        		var handler = this.resolveAssociationHandler(model.name, id);
+                        
+                        		// Assign the task which will accept the transaction
+                        		return function(transaction) {
+                        			return handler.call(this, model, hash, transaction);
+                        		}.bind(this);
+                        	},
+                        
+                        	/**
+                        	 * Resolves the Association handler for a specific Association Model. Resolves the method
+                        	 * by checking the ID argument if it exists. If ID exists the model should be updated,
+                        	 * in case ID is not defined Model should be created.
+                        	 *
+                        	 * If the method is &#x60;create&#x60; and name is &#x60;User&#x60;, the first handler that is searched is
+                        	 * &#x60;createUserAssociation&#x60;, if the method does not exist, &#x60;createAssociation&#x60; will be
+                        	 * used.
+                        	 *
+                        	 * Similar is for &#x60;update&#x60;, it should look for &#x60;updateUserAssociation&#x60; or &#x60;updateAssociation&#x60;
+                        	 * if the first one does not exist.
+                        	 *
+                        	 * @method resolveAssociationHandler
+                        	 * @param  {String}        type
+                        	 * @param  {String|Number} id
+                        	 * @return {Function}
+                        	 */
+                        	resolveAssociationHandler: function resolveAssociationHandler(name, id) {
+                        		var method = typeof id === &#x27;undefined&#x27; ? &#x27;create&#x27; : &#x27;update&#x27;;
+                        		var keys = [method + name + &#x27;Association&#x27;, method + &#x27;Association&#x27;];
+                        
+                        		var available = _.filter(keys, function(key) {
+                        			return typeof this[key] === &#x27;function&#x27;;
+                        		}, this);
+                        
+                        		if (available.length) {
+                        			return this[available[0]];
+                        		}
+                        
+                        		throw new errors.TypeError(&#x27;Can not find Association Handler for keys &#x60;[%s]&#x60;.&#x27;, keys.join(&#x27;, &#x27;));
+                        	},
+                        
+                        	/**
+                        	 * Default Create Association Handler for all Models.
+                        	 *
+                        	 * @method createAssociation
+                        	 * @param  {Model}       model
+                        	 * @param  {Object}      data
+                        	 * @param  {Transaction} transaction
+                        	 * @return {Promise}
+                        	 */
+                        	createAssociation: function createAssociation(model, data, transaction) {
+                        		return model.create(data, {
+                        			transaction: transaction
+                        		});
+                        	},
+                        
+                        	/**
+                        	 * Default Update Association Handler for all Models.
+                        	 *
+                        	 * @method updateAssociation
+                        	 * @param  {Model}       model
+                        	 * @param  {Object}      data
+                        	 * @param  {Transaction} transaction
+                        	 * @return {Promise}
+                        	 */
+                        	updateAssociation: function updateAssociation(model, data, transaction) {
+                        		return model.update(data, {
+                        			transaction: transaction,
+                        			where: {
+                        				id: data.id
+                        			}
+                        		});
+                        	}
+                        });
+                        
+                        function resolveSubresourceInstance(model, id, subResource) {
+                        	var association = _.find(model.associations, function(association) {
+                        		if (association.target.name === subResource.name) {
+                        			return association;
+                        		}
+                        	});
+                        
+                        	if (!association || _.isEmpty(association)) {
+                        		return when.reject(new errors.BadRequestError(&#x27;No subresource with name &#x60;%s&#x60; found&#x27;, subResource));
+                        	}
+                        
+                        	return model.find(id).then(function(instance) {
+                        		if (!instance) {
+                        			return when.reject(new errors.NotFoundError(&#x27;Can not find model &#x60;%s&#x60;.&#x27;, model.name));
+                        		}
+                        
+                        		return {
+                        			instance: instance,
+                        			association: association
+                        		};
+                        	});
+                        }
+                        
+                        function resolveAccessorMethod(instance, association, accessorKey) {
+                        	var accessor = association.accessors[accessorKey];
+                        
+                        	if (typeof instance[accessor] !== &#x27;function&#x27;) {
+                        		throw new errors.TypeError(&#x27;Model has no accessor method &#x60;%s&#x60;.&#x27;, accessor || &#x27;undefined&#x27;);
+                        	}
+                        
+                        	return instance[accessor];
+                        }
+                        
+                        function executeTasks(service, tasks, model) {
+                        	// Execute all tasks with a transaction
+                        	return service.transaction(function(transaction, commit, rollback) {
+                        		sequence(tasks, transaction).then(commit, rollback);
+                        	}).then(function() {
+                        		return model;
+                        	});
+                        }
+                        
+                        module.exports = RestService;
+                        
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/jquery/jquery-1.8.2.min.js"></script>
+<script src="../assets/vendor/bootstrap/js/bootstrap.js"></script>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script src="../assets/js/yuidoc-bootstrap.js"></script>
+<script src="../javascripts/scale.fix.js"></script>
+
+
+<script type="text/javascript">
+    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+    try {
+        var pageTracker = _gat._getTracker("UA-57430955-2");
+        pageTracker._trackPageview();
+    } catch(err) {}
+</script>
+</body>
+</html>

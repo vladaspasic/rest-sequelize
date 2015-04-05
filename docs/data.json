@@ -1,0 +1,1426 @@
+{
+    "project": {
+        "name": "Rest Sequelize",
+        "description": "Rest Sequelize: Restfull wrapper built around the Sequelize ORM",
+        "url": "https://github.com/vladaspasic/rest-sequelize/",
+        "version": "0.0.1"
+    },
+    "files": {
+        "lib/core.js": {
+            "name": "lib/core.js",
+            "modules": {},
+            "classes": {
+                "RestSequelize.Object": 1
+            },
+            "fors": {},
+            "namespaces": {
+                "RestSequelize": 1
+            }
+        },
+        "lib/deserializer.js": {
+            "name": "lib/deserializer.js",
+            "modules": {},
+            "classes": {
+                "RestSequelize.Deserializer": 1
+            },
+            "fors": {},
+            "namespaces": {
+                "RestSequelize": 1
+            }
+        },
+        "lib/index.js": {
+            "name": "lib/index.js",
+            "modules": {
+                "rest-sequelize": 1
+            },
+            "classes": {},
+            "fors": {},
+            "namespaces": {
+                "RestSequelize": 1
+            }
+        },
+        "lib/resolver.js": {
+            "name": "lib/resolver.js",
+            "modules": {},
+            "classes": {
+                "RestSequelize.Resolver": 1
+            },
+            "fors": {},
+            "namespaces": {
+                "RestSequelize": 1
+            }
+        },
+        "lib/rest-adapter.js": {
+            "name": "lib/rest-adapter.js",
+            "modules": {},
+            "classes": {
+                "RestSequelize.RestAdapter": 1
+            },
+            "fors": {},
+            "namespaces": {
+                "RestSequelize": 1
+            }
+        },
+        "lib/rest-service.js": {
+            "name": "lib/rest-service.js",
+            "modules": {},
+            "classes": {
+                "RestSequelize.RestService": 1
+            },
+            "fors": {},
+            "namespaces": {
+                "RestSequelize": 1
+            }
+        },
+        "lib/serializer.js": {
+            "name": "lib/serializer.js",
+            "modules": {},
+            "classes": {
+                "RestSequelize.Serializer": 1
+            },
+            "fors": {},
+            "namespaces": {
+                "RestSequelize": 1
+            }
+        },
+        "theme/assets/vendor/bootstrap/js/bootstrap.min.js": {
+            "name": "theme/assets/vendor/bootstrap/js/bootstrap.min.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "theme/helpers/helpers.js": {
+            "name": "theme/helpers/helpers.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {
+        "rest-sequelize": {
+            "name": "rest-sequelize",
+            "submodules": {},
+            "classes": {
+                "RestSequelize.Object": 1,
+                "RestSequelize.Deserializer": 1,
+                "RestSequelize.Resolver": 1,
+                "RestSequelize.RestAdapter": 1,
+                "RestSequelize.RestService": 1,
+                "RestSequelize.Serializer": 1
+            },
+            "fors": {},
+            "namespaces": {
+                "RestSequelize": 1
+            },
+            "tag": "module",
+            "file": "lib/serializer.js",
+            "line": 4,
+            "description": "Rest Sequelize namespace",
+            "params": [
+                {
+                    "name": "sequelize",
+                    "description": "Sequelize instance",
+                    "type": "Sequelize"
+                },
+                {
+                    "name": "options",
+                    "description": "Container used by the `DefaultResolver`\n                             to resolve modules needed by the `RestAdapter`",
+                    "type": "Object"
+                }
+            ]
+        }
+    },
+    "classes": {
+        "RestSequelize.Object": {
+            "name": "RestSequelize.Object",
+            "shortname": "RestSequelize.Object",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize",
+            "file": "lib/core.js",
+            "line": 3,
+            "description": "Base Object Class for all classes inside the Rest Sequelize Registry."
+        },
+        "RestSequelize.Deserializer": {
+            "name": "RestSequelize.Deserializer",
+            "shortname": "RestSequelize.Deserializer",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize",
+            "file": "lib/deserializer.js",
+            "line": 3,
+            "description": "Deserializer Class used for deserialization\nof incoming payloads.",
+            "extends": "RestSequelize.Object"
+        },
+        "RestSequelize.Resolver": {
+            "name": "RestSequelize.Resolver",
+            "shortname": "RestSequelize.Resolver",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize",
+            "file": "lib/resolver.js",
+            "line": 5,
+            "description": "Resolver used by the RestAdapter to find\nModels, {{#crossLink \"RestSequelize.RestService\"}}{{/crossLink}},\n{{#crossLink \"RestSequelize.Serializer\"}}{{/crossLink}} and\n{{#crossLink \"RestSequelize.Deserializer\"}}{{/crossLink}} classes.\n\nUses caching to store and resolve already looked up modules.",
+            "extends": "RestSequelize.Object"
+        },
+        "RestSequelize.RestAdapter": {
+            "name": "RestSequelize.RestAdapter",
+            "shortname": "RestSequelize.RestAdapter",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize",
+            "file": "lib/rest-adapter.js",
+            "line": 10,
+            "description": "Adapter for defining RESTFull schema for Models. Should handle\nall CRUD operation runned against a Model.\n\nAll incoming payloads are normalized, and the serialized\ninto a response object ready for flushing.",
+            "extends": "RestSequelize.Object"
+        },
+        "RestSequelize.RestService": {
+            "name": "RestSequelize.RestService",
+            "shortname": "RestSequelize.RestService",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize",
+            "file": "lib/rest-service.js",
+            "line": 11,
+            "description": "Rest Service for handling Model Persistance logic. Can have\nmultiple implementations for each Model type.",
+            "extends": "RestSequelize.Object"
+        },
+        "RestSequelize.Serializer": {
+            "name": "RestSequelize.Serializer",
+            "shortname": "RestSequelize.Serializer",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize",
+            "file": "lib/serializer.js",
+            "line": 4,
+            "description": "Serializer Class used to serialize Sequelize\nModel attributes.",
+            "extends": "RestSequelize.Object"
+        }
+    },
+    "classitems": [
+        {
+            "file": "lib/core.js",
+            "line": 75,
+            "description": "Extends the current class with an new subclass.",
+            "example": [
+                "\n\t\tvar MyClass = RestSequelize.Object.extend({\n\t\t\tmethod: function(arg) {\n\t\t\t\tconsole.log(arg);\n\t\t\t}\n\t\t});\n\nWhen defining a subclass, you can override methods but\nstill access the implementation of your parent class by\ncalling the special _super() method:",
+                "\n\t\tvar MyOtherClass = MyClass.extend({\n\t\t\tinit: function() {\n\t\t\t\tthis._super('New argument');\n\t\t\t}\n\t\t});"
+            ],
+            "static": 1,
+            "itemtype": "method",
+            "name": "extend",
+            "params": [
+                {
+                    "name": "props",
+                    "description": "Object of new methods",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "a new subclass",
+                "type": "Object"
+            },
+            "class": "RestSequelize.Object",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/core.js",
+            "line": 145,
+            "description": "Initializer function for each class,\ninvoked by the all subclasses when they are\ncreated / instantiated.",
+            "itemtype": "method",
+            "name": "init",
+            "class": "RestSequelize.Object",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/core.js",
+            "line": 156,
+            "description": "Creates a new instance of the class.",
+            "example": [
+                "\n\tvar instance = RestSequelize.Object.create({\n\t\tmethod: function(arg) {\n\t\t\t\tconsole.log(arg);\n\t\t\t}\n\t\t});\n\n\tinstance.method('My object');"
+            ],
+            "itemtype": "method",
+            "name": "create",
+            "static": 1,
+            "params": [
+                {
+                    "name": "props",
+                    "description": "Defines new properties on the newly created object",
+                    "type": "Object"
+                },
+                {
+                    "name": "statics",
+                    "description": "Defines read only values for the object",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "a new Object Class function",
+                "type": "Function"
+            },
+            "class": "RestSequelize.Object",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/core.js",
+            "line": 180,
+            "description": "Extends the class prototype",
+            "itemtype": "method",
+            "name": "reopen",
+            "static": 1,
+            "params": [
+                {
+                    "name": "protoProps",
+                    "description": "new properties for the prototype",
+                    "type": "Object"
+                }
+            ],
+            "class": "RestSequelize.Object",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/deserializer.js",
+            "line": 12,
+            "description": "Deserializes the incoming payload to a\ndata that will later be used to populate\nSequelize Model attributes.\n\nBy default raw payload is returned.",
+            "itemtype": "method",
+            "name": "deserialize",
+            "params": [
+                {
+                    "name": "adapter",
+                    "description": "",
+                    "type": "RestAdapter"
+                },
+                {
+                    "name": "type",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "payload",
+                    "description": "",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Object"
+            },
+            "class": "RestSequelize.Deserializer",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/resolver.js",
+            "line": 21,
+            "description": "Normalizes the type name. Checks if the argument is\na Sequelize model and uses the plural name of the Model.\n\nThis method can usefull for adding prefixes or suffixes\nfor the searched module.",
+            "itemtype": "method",
+            "name": "normalizeTypeName",
+            "params": [
+                {
+                    "name": "name",
+                    "description": "",
+                    "type": "String|Model"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "String"
+            },
+            "class": "RestSequelize.Resolver",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/resolver.js",
+            "line": 45,
+            "description": "Lookup the Service",
+            "itemtype": "method",
+            "name": "resolveService",
+            "params": [
+                {
+                    "name": "name",
+                    "description": "Name of the Service implementation",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "RestSequelize.Service"
+            },
+            "class": "RestSequelize.Resolver",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/resolver.js",
+            "line": 56,
+            "description": "Lookup the Serializer",
+            "itemtype": "method",
+            "name": "resolveSerializer",
+            "params": [
+                {
+                    "name": "name",
+                    "description": "Name of the Serializer implementation",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "RestSequelize.Serializer"
+            },
+            "class": "RestSequelize.Resolver",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/resolver.js",
+            "line": 67,
+            "description": "Lookup the Deserializer",
+            "itemtype": "method",
+            "name": "resolveDeserializer",
+            "params": [
+                {
+                    "name": "name",
+                    "description": "Name of the Deserializer implementation",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "RestSequelize.Deserializer"
+            },
+            "class": "RestSequelize.Resolver",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/resolver.js",
+            "line": 78,
+            "description": "Lookup the Sequelize Model.\nThis method is not cached due to the reason that it is looked up\ndirectly on the sequelize instance.",
+            "itemtype": "method",
+            "name": "resolveModel",
+            "params": [
+                {
+                    "name": "name",
+                    "description": "Name of the Sequelize Model",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Model"
+            },
+            "class": "RestSequelize.Resolver",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/resolver.js",
+            "line": 103,
+            "description": "Get a module for a given type and name from\nthe cache.",
+            "itemtype": "method",
+            "name": "getFromCache",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "Type of the module, it can be\n                     `service`, `serializer` or `deserializer`.",
+                    "type": "String"
+                },
+                {
+                    "name": "name",
+                    "description": "Name for a specific module",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "*"
+            },
+            "class": "RestSequelize.Resolver",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/resolver.js",
+            "line": 119,
+            "description": "Adds the resolved module for a given type and name\nto cache.",
+            "itemtype": "method",
+            "name": "addToCache",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "Type of the module, it can be\n                      `service`, `serializer` or `deserializer`.",
+                    "type": "String"
+                },
+                {
+                    "name": "name",
+                    "description": "Name for a specific module",
+                    "type": "String"
+                },
+                {
+                    "name": "value",
+                    "description": "The resolved module",
+                    "type": "*"
+                }
+            ],
+            "class": "RestSequelize.Resolver",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/resolver.js",
+            "line": 139,
+            "description": "Clears he cache.",
+            "itemtype": "method",
+            "name": "clearCache",
+            "class": "RestSequelize.Resolver",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/resolver.js",
+            "line": 148,
+            "description": "Resolves the required module from the\ncontainer.\n\nThis method must be implemented by all\nextending classes.",
+            "itemtype": "method",
+            "name": "resolve",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "Type of the module, it can be\n                     `service`, `serializer` or `deserializer`.",
+                    "type": "String"
+                },
+                {
+                    "name": "name",
+                    "description": "Name for a specific module",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "*"
+            },
+            "class": "RestSequelize.Resolver",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-adapter.js",
+            "line": 22,
+            "description": "Sequelize instance",
+            "itemtype": "property",
+            "name": "sequelize",
+            "type": "{Sequelize}",
+            "class": "RestSequelize.RestAdapter",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-adapter.js",
+            "line": 30,
+            "description": "Resolver subclass that should be used to resolve\nmodules",
+            "itemtype": "property",
+            "name": "resolver",
+            "type": "{Resolver}",
+            "class": "RestSequelize.RestAdapter",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-adapter.js",
+            "line": 51,
+            "description": "Find a {{#crossLink \"RestSequelize.RestService\"}}{{/crossLink}} instance for a given type.\nIf the {{#crossLink \"RestSequelize.Resolver\"}}{{/crossLink}} can not resolve a service,\nit uses the default implementation.",
+            "itemtype": "method",
+            "name": "serviceFor",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "",
+                    "type": "String|Model"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "RestSequelize.RestService"
+            },
+            "class": "RestSequelize.RestAdapter",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-adapter.js",
+            "line": 70,
+            "description": "Find a {{#crossLink \"RestSequelize.Serializer\"}}{{/crossLink}} instance for a given type.\nIf the {{#crossLink \"RestSequelize.Resolver\"}}{{/crossLink}} can not resolve a serializer,\nit uses the default implementation.",
+            "itemtype": "method",
+            "name": "serializerFor",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "RestSequelize.Serializer"
+            },
+            "class": "RestSequelize.RestAdapter",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-adapter.js",
+            "line": 89,
+            "description": "Find a {{#crossLink \"RestSequelize.Deserializer\"}}{{/crossLink}} instance for a given type.\nIf the {{#crossLink \"RestSequelize.Resolver\"}}{{/crossLink}} can not resolve a deserializer,\nit uses the default implementation.",
+            "itemtype": "method",
+            "name": "deserializerFor",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "RestSequelize.Deserializer"
+            },
+            "class": "RestSequelize.RestAdapter",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-adapter.js",
+            "line": 108,
+            "description": "Find a Model instance for a given type.\n\nIf a type is not a `String` or a Model can not\nbe found an Error will be raised.",
+            "itemtype": "method",
+            "name": "modelFor",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "",
+                    "type": "String|Model"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Model"
+            },
+            "class": "RestSequelize.RestAdapter",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-adapter.js",
+            "line": 136,
+            "description": "Normailizes the incoming payload using the\n{{#crossLink \"RestSequelize.Deserializer\"}}{{/crossLink}}.\n\nIf the payload is empty, a BadRequest Error is raised.",
+            "itemtype": "method",
+            "name": "normalizePayload",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "",
+                    "type": "String|Model"
+                },
+                {
+                    "name": "payload",
+                    "description": "",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Object"
+            },
+            "class": "RestSequelize.RestAdapter",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-adapter.js",
+            "line": 157,
+            "description": "Serialize the Sequelize Instance or an Array of Instances\nusing the  {{#crossLink \"RestSequelize.Serializer\"}}{{/crossLink}}.",
+            "itemtype": "method",
+            "name": "serialize",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "",
+                    "type": "String|Model"
+                },
+                {
+                    "name": "result",
+                    "description": "",
+                    "type": "Object|Array"
+                },
+                {
+                    "name": "meta",
+                    "description": "",
+                    "type": "Object"
+                },
+                {
+                    "name": "status",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Object"
+            },
+            "class": "RestSequelize.RestAdapter",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-adapter.js",
+            "line": 174,
+            "description": "Preapre the raw query parameters from the request into\na Sequelize Query. Then find all results that match this query.",
+            "itemtype": "method",
+            "name": "find",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "",
+                    "type": "String|Model"
+                },
+                {
+                    "name": "query",
+                    "description": "",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "RestSequelize.RestAdapter",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-adapter.js",
+            "line": 204,
+            "description": "Find a Model for a specific id.\n\nIf `id` is not a Number, a TypeError is raised.",
+            "itemtype": "method",
+            "name": "findOne",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "",
+                    "type": "String|Model"
+                },
+                {
+                    "name": "id",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "RestSequelize.RestAdapter",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-adapter.js",
+            "line": 230,
+            "description": "Create a new Model record in the Database. If the record is successfully\ncreated, we will reload the model with all the attributes and\nassociations from the database.",
+            "itemtype": "method",
+            "name": "create",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "",
+                    "type": "String|Model"
+                },
+                {
+                    "name": "payload",
+                    "description": "",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "RestSequelize.RestAdapter",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-adapter.js",
+            "line": 249,
+            "description": "Updates a new Model record in the Database for the given id.\n\nIf id is an object, it is considered to be a payload\nobject to be normalized.\n\nIf the record is successfully updated, we will reload the model\nwith all the attributes and associations from the database.",
+            "itemtype": "method",
+            "name": "update",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "",
+                    "type": "String|Model"
+                },
+                {
+                    "name": "id",
+                    "description": "",
+                    "type": "Number"
+                },
+                {
+                    "name": "payload",
+                    "description": "",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "RestSequelize.RestAdapter",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-adapter.js",
+            "line": 286,
+            "description": "Delete the model for the given id.",
+            "itemtype": "method",
+            "name": "delete",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "",
+                    "type": "String|Model"
+                },
+                {
+                    "name": "id",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "RestSequelize.RestAdapter",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-adapter.js",
+            "line": 302,
+            "description": "Find all Related Models [Subresources] for a Model.",
+            "itemtype": "method",
+            "name": "findSubResources",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "",
+                    "type": "String|Model"
+                },
+                {
+                    "name": "id",
+                    "description": "",
+                    "type": "Numebr"
+                },
+                {
+                    "name": "subtype",
+                    "description": "",
+                    "type": "String|Model"
+                },
+                {
+                    "name": "query",
+                    "description": "",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "RestSequelize.RestAdapter",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-adapter.js",
+            "line": 325,
+            "description": "Find a Related Model [Subresources] for a Model with a given id.",
+            "itemtype": "method",
+            "name": "findSubResourceById",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "",
+                    "type": "String|Model"
+                },
+                {
+                    "name": "id",
+                    "description": "",
+                    "type": "Numebr"
+                },
+                {
+                    "name": "subtype",
+                    "description": "",
+                    "type": "String|Model"
+                },
+                {
+                    "name": "subId",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "RestSequelize.RestAdapter",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-adapter.js",
+            "line": 352,
+            "description": "Creates new or updates existing associations for a Model.\n\nIf the payload contains records with an id, they are considered\nas existing and they will be updated. If there is no id, a new\nrecord will be created.",
+            "itemtype": "method",
+            "name": "createSubResources",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "",
+                    "type": "String|Model"
+                },
+                {
+                    "name": "id",
+                    "description": "",
+                    "type": "Numebr"
+                },
+                {
+                    "name": "subtype",
+                    "description": "",
+                    "type": "String|Model"
+                },
+                {
+                    "name": "payload",
+                    "description": "",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "RestSequelize.RestAdapter",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-adapter.js",
+            "line": 376,
+            "description": "Find a Related Model [Subresources] for a Model with a given id.",
+            "itemtype": "method",
+            "name": "deleteSubResources",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "",
+                    "type": "String|Model"
+                },
+                {
+                    "name": "id",
+                    "description": "",
+                    "type": "Numebr"
+                },
+                {
+                    "name": "subtype",
+                    "description": "",
+                    "type": "String|Model"
+                },
+                {
+                    "name": "query",
+                    "description": "",
+                    "type": "Object|Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "RestSequelize.RestAdapter",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-adapter.js",
+            "line": 402,
+            "description": "Execute a given action on the Service\nresponsible for this Model type.",
+            "itemtype": "method",
+            "name": "_execute",
+            "params": [
+                {
+                    "name": "method",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "type",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "data",
+                    "description": "",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "access": "private",
+            "tagname": "",
+            "class": "RestSequelize.RestAdapter",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-service.js",
+            "line": 25,
+            "description": "Find a list of Models with all thier\nassociations for a specific query and\ncount them.",
+            "itemtype": "method",
+            "name": "find",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "query",
+                    "description": "",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "RestSequelize.RestService",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-service.js",
+            "line": 46,
+            "description": "Find one Model with all its associations\nfor a specific query.",
+            "itemtype": "method",
+            "name": "findOne",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "query",
+                    "description": "",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "RestSequelize.RestService",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-service.js",
+            "line": 124,
+            "description": "Delete the model for the given id.",
+            "itemtype": "method",
+            "name": "delete",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "id",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "RestSequelize.RestService",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-service.js",
+            "line": 142,
+            "description": "Delete all models for the given query.\n\nThis request is executed with a transaction, as it is considered\nas a delicate one.",
+            "itemtype": "method",
+            "name": "deleteAll",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "query",
+                    "description": "",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "RestSequelize.RestService",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-service.js",
+            "line": 165,
+            "description": "Create a new Transaction. The rollback method is wrapped inside\nan internal function for easier managment of unexpected Errors that\nmay occur during that process.\n\nThis method returns a Promise which is resolved when the transaction is\ncommited successfully.\n\nWhen transaction is rollbacked, it returns a unresolved promise. If the\ntransaction could not be rollbacked, a DatabaseError is returned as a reason.",
+            "itemtype": "method",
+            "name": "transaction",
+            "params": [
+                {
+                    "name": "callback",
+                    "description": "",
+                    "type": "Function"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "RestSequelize.RestService",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-service.js",
+            "line": 211,
+            "description": "Include the related records for the given model in the Query.",
+            "itemtype": "method",
+            "name": "populate",
+            "params": [
+                {
+                    "name": "model",
+                    "description": "",
+                    "type": "Model"
+                },
+                {
+                    "name": "query",
+                    "description": "",
+                    "type": "Query"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Query"
+            },
+            "class": "RestSequelize.RestService",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-service.js",
+            "line": 238,
+            "description": "Persist the Model with all his Associations to the Database.",
+            "itemtype": "method",
+            "name": "persist",
+            "params": [
+                {
+                    "name": "model",
+                    "description": "",
+                    "type": "Model"
+                },
+                {
+                    "name": "data",
+                    "description": "",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "RestSequelize.RestService",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-service.js",
+            "line": 281,
+            "description": "Persists the `BelongsTo` Association type. If the request contains the data\nwith the association name, it will be either created or updated, depending\nif the data contained the primary key.\n\nThis method returns a Function which will be executed before the model is\npersisted in the Database. Function accepts a current Database Transacation\nargument.",
+            "itemtype": "method",
+            "name": "persistBelongsTo",
+            "params": [
+                {
+                    "name": "association",
+                    "description": "",
+                    "type": "Association"
+                },
+                {
+                    "name": "model",
+                    "description": "",
+                    "type": "Model"
+                },
+                {
+                    "name": "data",
+                    "description": "",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Function"
+            },
+            "class": "RestSequelize.RestService",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-service.js",
+            "line": 319,
+            "description": "Persits the `HasMany` Association type. If the request contains the list\nof records which matches the Association name, they will be created or updated,\ndepending if the data contained the primary key.\n\nThis method returns a Function which will be executed after the model is\npersisted in the Database. Function accepts a current Database Transacation\nargument.",
+            "itemtype": "method",
+            "name": "persistHasMany",
+            "params": [
+                {
+                    "name": "association",
+                    "description": "",
+                    "type": "Association"
+                },
+                {
+                    "name": "model",
+                    "description": "",
+                    "type": "Model"
+                },
+                {
+                    "name": "data",
+                    "description": "",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Function"
+            },
+            "class": "RestSequelize.RestService",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-service.js",
+            "line": 366,
+            "description": "Resolves and executes the persistance of the Association. First it will\ntry to resolve is there a specific persitance handler for this Association\nModel type, and then tries to execute it inside a Transaction.\n\nThis method returns a Function that is returning a Promise. Function\naccepts a Transaction argument.",
+            "itemtype": "method",
+            "name": "persistAssociation",
+            "params": [
+                {
+                    "name": "association",
+                    "description": "",
+                    "type": "Association"
+                },
+                {
+                    "name": "hash",
+                    "description": "",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Function"
+            },
+            "class": "RestSequelize.RestService",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-service.js",
+            "line": 392,
+            "description": "Resolves the Association handler for a specific Association Model. Resolves the method\nby checking the ID argument if it exists. If ID exists the model should be updated,\nin case ID is not defined Model should be created.\n\nIf the method is `create` and name is `User`, the first handler that is searched is\n`createUserAssociation`, if the method does not exist, `createAssociation` will be\nused.\n\nSimilar is for `update`, it should look for `updateUserAssociation` or `updateAssociation`\nif the first one does not exist.",
+            "itemtype": "method",
+            "name": "resolveAssociationHandler",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "",
+                    "type": "String"
+                },
+                {
+                    "name": "id",
+                    "description": "",
+                    "type": "String|Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Function"
+            },
+            "class": "RestSequelize.RestService",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-service.js",
+            "line": 424,
+            "description": "Default Create Association Handler for all Models.",
+            "itemtype": "method",
+            "name": "createAssociation",
+            "params": [
+                {
+                    "name": "model",
+                    "description": "",
+                    "type": "Model"
+                },
+                {
+                    "name": "data",
+                    "description": "",
+                    "type": "Object"
+                },
+                {
+                    "name": "transaction",
+                    "description": "",
+                    "type": "Transaction"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "RestSequelize.RestService",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/rest-service.js",
+            "line": 439,
+            "description": "Default Update Association Handler for all Models.",
+            "itemtype": "method",
+            "name": "updateAssociation",
+            "params": [
+                {
+                    "name": "model",
+                    "description": "",
+                    "type": "Model"
+                },
+                {
+                    "name": "data",
+                    "description": "",
+                    "type": "Object"
+                },
+                {
+                    "name": "transaction",
+                    "description": "",
+                    "type": "Transaction"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Promise"
+            },
+            "class": "RestSequelize.RestService",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "lib/serializer.js",
+            "line": 13,
+            "description": "Serializes the payload obtained from the database to\nbe flushed to the client.\n\nBy default this function returns a `toJSON` representation\nof the Sequelize Model.",
+            "itemtype": "method",
+            "name": "serialize",
+            "params": [
+                {
+                    "name": "adapter",
+                    "description": "",
+                    "type": "RestAdapter"
+                },
+                {
+                    "name": "model",
+                    "description": "",
+                    "type": "Model|Array"
+                },
+                {
+                    "name": "{Object",
+                    "description": "meta"
+                },
+                {
+                    "name": "statusCode",
+                    "description": "",
+                    "type": "Numbser"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Object"
+            },
+            "class": "RestSequelize.Serializer",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "theme/assets/vendor/bootstrap/js/bootstrap.min.js",
+            "line": 1,
+            "description": "Bootstrap.js by @fat & @mdo\nplugins: bootstrap-transition.js, bootstrap-modal.js, bootstrap-dropdown.js, bootstrap-scrollspy.js, bootstrap-tab.js, bootstrap-tooltip.js, bootstrap-popover.js, bootstrap-affix.js, bootstrap-alert.js, bootstrap-button.js, bootstrap-collapse.js, bootstrap-carousel.js, bootstrap-typeahead.js\nCopyright 2012 Twitter, Inc.\nhttp://www.apache.org/licenses/LICENSE-2.0.txt",
+            "class": "",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        },
+        {
+            "file": "theme/helpers/helpers.js",
+            "line": 16,
+            "description": "Hack for:\nhttps://github.com/yui/yuidoc/issues/198\n\nUsage:\n  {{#crossLinkWrapper type}}{{#crossLink type}}{{/crossLink}}{{/crossLinkWrapper}}",
+            "class": "",
+            "module": "rest-sequelize",
+            "namespace": "RestSequelize"
+        }
+    ],
+    "warnings": [
+        {
+            "message": "Missing item type\nBootstrap.js by @fat & @mdo\nplugins: bootstrap-transition.js, bootstrap-modal.js, bootstrap-dropdown.js, bootstrap-scrollspy.js, bootstrap-tab.js, bootstrap-tooltip.js, bootstrap-popover.js, bootstrap-affix.js, bootstrap-alert.js, bootstrap-button.js, bootstrap-collapse.js, bootstrap-carousel.js, bootstrap-typeahead.js\nCopyright 2012 Twitter, Inc.\nhttp://www.apache.org/licenses/LICENSE-2.0.txt",
+            "line": " theme/assets/vendor/bootstrap/js/bootstrap.min.js:1"
+        },
+        {
+            "message": "Missing item type\nHack for:\nhttps://github.com/yui/yuidoc/issues/198\n\nUsage:\n  {{#crossLinkWrapper type}}{{#crossLink type}}{{/crossLink}}{{/crossLinkWrapper}}",
+            "line": " theme/helpers/helpers.js:16"
+        }
+    ]
+}

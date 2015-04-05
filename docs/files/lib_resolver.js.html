@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>rest-sequelize by vladaspasic</title>
+
+    <link rel="stylesheet" href="../stylesheets/styles.css">
+    <link rel="stylesheet" href="../stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" href="">
+    <link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/lucid.css">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body class="yui3-skin-sam">
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <a href="http://vladaspasic.github.io/rest-sequelize">
+            <h1 class="brand" style="padding: 10px 16px 10px; height: 20px; line-height: 20px; margin-left: 0;">
+                Rest Sequelize
+            </h1>
+        </a>
+    <div class="nav">
+            <li class="divider-vertical"></li>
+            <li>
+                <p class="navbar-text">
+                    Rest Sequelize: Restfull wrapper built around the Sequelize ORM
+                </p>
+            </li>
+        </div>
+        <form class="navbar-form pull-right" style="line-height: 40px; height: 40px;">
+            <input style="margin-top: 0;" type="text" class="search-query" placeholder="Search for classes/modules..." data-obj='["classes/RestSequelize.Deserializer", "classes/RestSequelize.Object", "classes/RestSequelize.Resolver", "classes/RestSequelize.RestAdapter", "classes/RestSequelize.RestService", "classes/RestSequelize.Serializer", "modules/rest-sequelize"]'>
+        </form>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="span3" id='sidebar-left'>
+            <div class='repo-info'>
+
+                <p>Version: 0.0.1</p>
+
+                <p class="view"><a href="https://github.com/vladaspasic/rest-sequelize">View the Project on GitHub <small>vladaspasic/rest-sequelize</small></a></p>
+
+
+                <ul>
+                  <li><a href="https://github.com/vladaspasic/rest-sequelize/zipball/master">Download <strong>ZIP File</strong></a></li>
+                  <li><a href="https://github.com/vladaspasic/rest-sequelize/tarball/master">Download <strong>TAR Ball</strong></a></li>
+                  <li><a href="https://github.com/vladaspasic/rest-sequelize">View On <strong>GitHub</strong></a></li>
+                </ul>
+            </div>
+
+           <div>
+               <div id="sidebar">
+               <div id="classes">
+                   <ul id="api-classes" class="nav nav-list">
+                   	<li class="nav-header">Classes</li>
+                           <li><a href="../classes/RestSequelize.Deserializer.html">RestSequelize.Deserializer</a></li>
+                           <li><a href="../classes/RestSequelize.Object.html">RestSequelize.Object</a></li>
+                           <li><a href="../classes/RestSequelize.Resolver.html">RestSequelize.Resolver</a></li>
+                           <li><a href="../classes/RestSequelize.RestAdapter.html">RestSequelize.RestAdapter</a></li>
+                           <li><a href="../classes/RestSequelize.RestService.html">RestSequelize.RestService</a></li>
+                           <li><a href="../classes/RestSequelize.Serializer.html">RestSequelize.Serializer</a></li>
+                       <li class="divider"></li>
+                   </ul>
+               </div>
+               </div>
+           </div>
+        </div>
+        <div class="span9 offset3">
+                <form id="options-form" class="form-inline pull-right">
+                    Show:
+                    <label for="api-show-inherited" class="checkbox">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected" class="checkbox">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private" class="checkbox">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated" class="checkbox">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </form>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <div class="page-header">
+                            <h1>lib/resolver.js <small>File</small></h1>
+                        </div>
+                        
+                        <div class="file">
+                            <pre class="prettyprint linenums">
+                        var CoreObject = require(&#x27;./core&#x27;),
+                        	_ = require(&#x27;lodash&#x27;),
+                        	errors = require(&#x27;error-globals&#x27;);
+                        
+                        /**
+                         * Resolver used by the RestAdapter to find
+                         * Models, {{#crossLink &quot;RestSequelize.RestService&quot;}}{{/crossLink}},
+                         * {{#crossLink &quot;RestSequelize.Serializer&quot;}}{{/crossLink}} and
+                         * {{#crossLink &quot;RestSequelize.Deserializer&quot;}}{{/crossLink}} classes.
+                         *
+                         * Uses caching to store and resolve already looked up modules.
+                         *
+                         * @class Resolver
+                         * @extends RestSequelize.Object
+                         * @namespace RestSequelize
+                         */
+                        module.exports = CoreObject.extend({
+                        	init: function() {
+                        		this._cache = {};
+                        	},
+                        	/**
+                        	 * Normalizes the type name. Checks if the argument is
+                        	 * a Sequelize model and uses the plural name of the Model.
+                        	 *
+                        	 * This method can usefull for adding prefixes or suffixes
+                        	 * for the searched module.
+                        	 *
+                        	 * @method normalizeTypeName
+                        	 * @param  {String|Model} name
+                        	 * @return {String}
+                        	 */
+                        	normalizeTypeName: function(name) {
+                        		if(_.isString(name.tableName) || typeof name.Instance === &#x27;function&#x27;) {
+                        			name = name.options.name.plural;
+                        		}
+                        
+                        		if (!_.isString(name)) {
+                        			throw new errors.TypeError(&#x27;Type name must be a String or a Sequelize Model. &#x27; +
+                        				&#x27;You passed a &#x60;%s&#x60;.&#x27;, typeof name);
+                        		}
+                        
+                        		return name;
+                        	},
+                        
+                        	/**
+                        	 * Lookup the Service
+                        	 *
+                        	 * @method resolveService
+                        	 * @param  {String} name Name of the Service implementation
+                        	 * @return {RestSequelize.Service}
+                        	 */
+                        	resolveService: function(name) {
+                        		return resolveAndCache(this, &#x27;services&#x27;, this.normalizeTypeName(name));
+                        	},
+                        
+                        	/**
+                        	 * Lookup the Serializer
+                        	 *
+                        	 * @method resolveSerializer
+                        	 * @param  {String} name Name of the Serializer implementation
+                        	 * @return {RestSequelize.Serializer}
+                        	 */
+                        	resolveSerializer: function(name) {
+                        		return resolveAndCache(this, &#x27;serializers&#x27;, this.normalizeTypeName(name));
+                        	},
+                        
+                        	/**
+                        	 * Lookup the Deserializer
+                        	 *
+                        	 * @method resolveDeserializer
+                        	 * @param  {String} name Name of the Deserializer implementation
+                        	 * @return {RestSequelize.Deserializer}
+                        	 */
+                        	resolveDeserializer: function(name) {
+                        		return resolveAndCache(this, &#x27;deserializers&#x27;, this.normalizeTypeName(name));
+                        	},
+                        
+                        	/**
+                        	 * Lookup the Sequelize Model.
+                        	 * This method is not cached due to the reason that it is looked up
+                        	 * directly on the sequelize instance.
+                        	 *
+                        	 * @method resolveModel
+                        	 * @param  {String} name Name of the Sequelize Model
+                        	 * @return {Model}
+                        	 */
+                        	resolveModel: function(name) {
+                        		if(_.isString(name.tableName) || typeof name.Instance === &#x27;function&#x27;) {
+                        			return name;
+                        		}
+                        
+                        		var model;
+                        
+                        		_.each(this.sequelize.models, function(m) {
+                        			if(name.toLowerCase() === m.options.name.plural.toLowerCase()) {
+                        				model = m;
+                        			}
+                        		});
+                        
+                        		return model;
+                        	},
+                        
+                        	/**
+                        	 * Get a module for a given type and name from
+                        	 * the cache.
+                        	 *
+                        	 * @method getFromCache
+                        	 * @param {String} type Type of the module, it can be
+                        	 *                      &#x60;service&#x60;, &#x60;serializer&#x60; or &#x60;deserializer&#x60;.
+                        	 * @param {String} name Name for a specific module
+                        	 * @return {*}
+                        	 */
+                        	getFromCache: function(type, name) {
+                        		var cacheKey = type + &#x27;:&#x27; + name;
+                        
+                        		return this._cache &amp;&amp; this._cache[cacheKey];
+                        	},
+                        
+                        	/**
+                        	 * Adds the resolved module for a given type and name
+                        	 * to cache.
+                        	 *
+                        	 * @method addToCache
+                        	 * @param {String} type  Type of the module, it can be
+                        	 *                       &#x60;service&#x60;, &#x60;serializer&#x60; or &#x60;deserializer&#x60;.
+                        	 * @param {String} name  Name for a specific module
+                        	 * @param {*}      value The resolved module
+                        	 */
+                        	addToCache: function(type, name, value) {
+                        		var cacheKey = type + &#x27;:&#x27; + name;
+                        
+                        		if(_.isEmpty(this._cache)) {
+                        			this._cache = {};
+                        		}
+                        
+                        		this._cache[cacheKey] = value;
+                        	},
+                        
+                        	/**
+                        	 * Clears he cache.
+                        	 *
+                        	 * @method clearCache
+                        	 */
+                        	clearCache: function() {
+                        		this._cache = {};
+                        	},
+                        
+                        	/**
+                        	 * Resolves the required module from the
+                        	 * container.
+                        	 *
+                        	 * This method must be implemented by all
+                        	 * extending classes.
+                        	 *
+                        	 * @method resolve
+                        	 * @param {String} type Type of the module, it can be
+                        	 *                      &#x60;service&#x60;, &#x60;serializer&#x60; or &#x60;deserializer&#x60;.
+                        	 * @param {String} name Name for a specific module
+                        	 * @return {*}
+                        	 */
+                        	resolve: function(/* type, name */) {
+                        		return;
+                        	}
+                        });
+                        
+                        
+                        
+                        function resolveAndCache(resolver, type, name) {
+                        	var module = resolver.getFromCache(type, name) || resolver.resolve(type, name);
+                        
+                        	if(module) {
+                        		resolver.addToCache(type, name, module);
+                        	}
+                        
+                        	return module;
+                        }
+                        
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/jquery/jquery-1.8.2.min.js"></script>
+<script src="../assets/vendor/bootstrap/js/bootstrap.js"></script>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script src="../assets/js/yuidoc-bootstrap.js"></script>
+<script src="../javascripts/scale.fix.js"></script>
+
+
+<script type="text/javascript">
+    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+    try {
+        var pageTracker = _gat._getTracker("UA-57430955-2");
+        pageTracker._trackPageview();
+    } catch(err) {}
+</script>
+</body>
+</html>

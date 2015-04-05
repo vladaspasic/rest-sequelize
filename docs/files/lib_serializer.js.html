@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>rest-sequelize by vladaspasic</title>
+
+    <link rel="stylesheet" href="../stylesheets/styles.css">
+    <link rel="stylesheet" href="../stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" href="">
+    <link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <link rel="stylesheet" href="../assets/css/lucid.css">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body class="yui3-skin-sam">
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <a href="http://vladaspasic.github.io/rest-sequelize">
+            <h1 class="brand" style="padding: 10px 16px 10px; height: 20px; line-height: 20px; margin-left: 0;">
+                Rest Sequelize
+            </h1>
+        </a>
+    <div class="nav">
+            <li class="divider-vertical"></li>
+            <li>
+                <p class="navbar-text">
+                    Rest Sequelize: Restfull wrapper built around the Sequelize ORM
+                </p>
+            </li>
+        </div>
+        <form class="navbar-form pull-right" style="line-height: 40px; height: 40px;">
+            <input style="margin-top: 0;" type="text" class="search-query" placeholder="Search for classes/modules..." data-obj='["classes/RestSequelize.Deserializer", "classes/RestSequelize.Object", "classes/RestSequelize.Resolver", "classes/RestSequelize.RestAdapter", "classes/RestSequelize.RestService", "classes/RestSequelize.Serializer", "modules/rest-sequelize"]'>
+        </form>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="span3" id='sidebar-left'>
+            <div class='repo-info'>
+
+                <p>Version: 0.0.1</p>
+
+                <p class="view"><a href="https://github.com/vladaspasic/rest-sequelize">View the Project on GitHub <small>vladaspasic/rest-sequelize</small></a></p>
+
+
+                <ul>
+                  <li><a href="https://github.com/vladaspasic/rest-sequelize/zipball/master">Download <strong>ZIP File</strong></a></li>
+                  <li><a href="https://github.com/vladaspasic/rest-sequelize/tarball/master">Download <strong>TAR Ball</strong></a></li>
+                  <li><a href="https://github.com/vladaspasic/rest-sequelize">View On <strong>GitHub</strong></a></li>
+                </ul>
+            </div>
+
+           <div>
+               <div id="sidebar">
+               <div id="classes">
+                   <ul id="api-classes" class="nav nav-list">
+                   	<li class="nav-header">Classes</li>
+                           <li><a href="../classes/RestSequelize.Deserializer.html">RestSequelize.Deserializer</a></li>
+                           <li><a href="../classes/RestSequelize.Object.html">RestSequelize.Object</a></li>
+                           <li><a href="../classes/RestSequelize.Resolver.html">RestSequelize.Resolver</a></li>
+                           <li><a href="../classes/RestSequelize.RestAdapter.html">RestSequelize.RestAdapter</a></li>
+                           <li><a href="../classes/RestSequelize.RestService.html">RestSequelize.RestService</a></li>
+                           <li><a href="../classes/RestSequelize.Serializer.html">RestSequelize.Serializer</a></li>
+                       <li class="divider"></li>
+                   </ul>
+               </div>
+               </div>
+           </div>
+        </div>
+        <div class="span9 offset3">
+                <form id="options-form" class="form-inline pull-right">
+                    Show:
+                    <label for="api-show-inherited" class="checkbox">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected" class="checkbox">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private" class="checkbox">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated" class="checkbox">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </form>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <div class="page-header">
+                            <h1>lib/serializer.js <small>File</small></h1>
+                        </div>
+                        
+                        <div class="file">
+                            <pre class="prettyprint linenums">
+                        var CoreObject = require(&#x27;./core&#x27;),
+                        	_ = require(&#x27;lodash&#x27;);
+                        
+                        /**
+                         * Serializer Class used to serialize Sequelize
+                         * Model attributes.
+                         *
+                         * @class  Serializer
+                         * @extends RestSequelize.Object
+                         * @namespace RestSequelize
+                         */
+                        module.exports = CoreObject.extend({
+                        	/**
+                        	 * Serializes the payload obtained from the database to
+                        	 * be flushed to the client.
+                        	 *
+                        	 * By default this function returns a &#x60;toJSON&#x60; representation
+                        	 * of the Sequelize Model.
+                        	 *
+                        	 * @method serialize
+                        	 * @param  {RestAdapter} adapter
+                        	 * @param  {Model|Array} model
+                        	 * @param  {Object       meta
+                        	 * @param  {Numbser}     statusCode
+                        	 * @return {Object}
+                        	 */
+                        	serialize: function(adapter, model ,meta, statusCode) {
+                        		var serialized;
+                        
+                        		if (_.isArray(model)) {
+                        			serialized = _.map(model, serializeRecord);
+                        		} else {
+                        			serialized = serializeRecord(model);
+                        		}
+                        
+                        		return {
+                        			result: serialized,
+                        			meta: meta || {},
+                        			status: statusCode || 200
+                        		};
+                        	}
+                        });
+                        
+                        function serializeRecord(record) {
+                        	if (_.isFunction(record.toJSON)) {
+                        		return record.toJSON();
+                        	}
+                        
+                        	return record;
+                        }
+                        
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/jquery/jquery-1.8.2.min.js"></script>
+<script src="../assets/vendor/bootstrap/js/bootstrap.js"></script>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script src="../assets/js/yuidoc-bootstrap.js"></script>
+<script src="../javascripts/scale.fix.js"></script>
+
+
+<script type="text/javascript">
+    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+    try {
+        var pageTracker = _gat._getTracker("UA-57430955-2");
+        pageTracker._trackPageview();
+    } catch(err) {}
+</script>
+</body>
+</html>
