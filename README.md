@@ -30,7 +30,7 @@ var MyService = RestService.extend({
 });
 ```
 
-For full API docs visit ....
+For full API docs visit this [link](http://vladaspasic.github.io/rest-sequelize/)
 
 This library uses [error-globals](https://github.com/vladaspasic/error-globals) for Error handling, as we can get the `statusCode` property for each error thrown by the library to display an appropriate HTTP status code in the response.
 
@@ -46,21 +46,21 @@ var adapter = RestSequelize.RestAdapter.extend({
 });
 ```
 
-Here we have created a simple `RestAdapter` instance with a `DefaultResolver`. If you wish to use a custom `Resolver` you must create your own. But we will come to that a bit later.
+Here we have created a simple `RestAdapter` instance with a noop `Resolver`. If you wish to use a custom `Resolver` you must create your own. But we will come to that a bit later.
 
 Lets asume that you have already created an sequelize instance, and defined a `User` model. To get a full list of users, you can do something like this.
 
 ```javascript
-adapter.find('users').then(function(users) {
-    console.log(users);
+adapter.find('users').then(function(serialized) {
+    console.log(serialized);
 }, function(error) {
     // your error handling logic
 });
 
 // Or
 
-adapter.find(sequelize.models.User).then(function(users) {
-    console.log(users);
+adapter.find(sequelize.models.User).then(function(serialized) {
+    console.log(serialized);
 }, function(error) {
     // your error handling logic
 });
@@ -82,12 +82,12 @@ You can page a resource like this.
 
 ```javascript
 adapter.find('users', {
-    page: 2,
-    size: 15,
-    sort: 'username',
-    order: 'asc'
-}).then(function(users) {
-    console.log(users);
+    page: 2, // defaults to 1
+    size: 15, // defaults to 30
+    sort: 'username', // defaults to modified_at
+    order: 'asc' // defaults to DESC
+}).then(function(serialized) {
+    console.log(serialized);
 });
 ```
 
@@ -99,8 +99,8 @@ Let us now create a new User.
 adapter.create('users',{
     username: 'username',
     password: 'pass'
-}).then(function(user) {
-    console.log(user);
+}).then(function(serialized) {
+    console.log(serialized);
 }, function(error) {
     // your error handling logic
 });
@@ -122,8 +122,8 @@ And update it.
 ```javascript
 adapter.update('users', 1, {
     username: 'new username'
-}).then(function(user) {
-    console.log(user);
+}).then(function(serialized) {
+    console.log(serialized);
 });
 
 // or
@@ -131,8 +131,8 @@ adapter.update('users', 1, {
 adapter.update('users', {
     id: 1,
     username: 'new username'
-}).then(function(user) {
-    console.log(user);
+}).then(function(serialized) {
+    console.log(serialized);
 });
 ```
 
@@ -141,9 +141,7 @@ Mainly the same happens here as well, resolving `Model` -> `Deserializer` -> `Re
 And we can delete it
 
 ```javascript
-adapter.delete('users', 1).then(function(user) {
-    console.log(user);
-});
+adapter.delete('users', 1);
 ```
 
 #### Resolver
@@ -152,12 +150,24 @@ As you could see the `Resolver` is one powerfull tool here as we can resolve to 
 
 To create your custom resolver you must implement the `resolve` method. Where type can be `services`, `models`, `serializers` or `deserializers`. Maybe you wish to add more types to your Rest interface that could be used by the Adapter.
 
+In this example we are going to resolve modules using the require method. Here the `type` will be the folder name and `name` is the name of the file we wish to load. If the file is not present, we would return `undefined` and let the `RestAdapter` use the default implementation.
+
 ```javascript
 var RestSequelize = require('rest-sequelize');
 
 var MyResolver = RestSequelize.Resolver.extend({
     resolve: function(type, name) {
-        // Your logic
+        var Factory;
+
+        try {
+            Factory = require('./' + type + '/' + name);
+        } catch(e) {
+            return;
+        }
+
+        return Factory.create({
+            sequelize: this.sequelize
+        });
     }
 });
 ```
