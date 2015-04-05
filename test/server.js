@@ -97,7 +97,7 @@ module.exports.createServer = function() {
 	});
 
 	app.use(function(error, req, res, next) {
-		console.log(error.stackTrace());
+		// console.log(error.stackTrace());
 
 		return res.status(error.statusCode || 500).json(error);
 	});

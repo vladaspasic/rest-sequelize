@@ -12,19 +12,19 @@ var assert = chai.assert,
 var resolver = Resolver.extend({
 	sequelize: database.sequelize,
 	resolve: function(type, name) {
-		 var Factory;
+		var Factory;
 
-		 console.log('Resolver PATH', ('./mocks/' + type + '/' + name));
+		//console.log('Resolver PATH', ('./mocks/' + type + '/' + name));
 
-        try {
-            Factory = require('./mocks/' + type + '/' + name);
-        } catch(e) {
-            return;
-        }
+		try {
+			Factory = require('./mocks/' + type + '/' + name);
+		} catch (e) {
+			return;
+		}
 
-        return Factory.extend({
-            sequelize: this.sequelize
-        }).create();
+		return Factory.extend({
+			sequelize: this.sequelize
+		}).create();
 	}
 }).create();
 
@@ -95,7 +95,8 @@ describe('Resolver', function() {
 
 		it('should resolve model', function() {
 			assert.deepEqual(resolver.resolveModel('users'), database.sequelize.models.User, 'Should return a user Model.');
-			assert.deepEqual(resolver.resolveModel('foos'), database.sequelize.models.Foo, 'Should return a Foo Model.');		});
+			assert.deepEqual(resolver.resolveModel('foos'), database.sequelize.models.Foo, 'Should return a Foo Model.');
+		});
 
 		it('should return an undefined', function() {
 			assert.isUndefined(resolver.resolveModel('nomodel'), 'Should return undefined.');
