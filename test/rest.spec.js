@@ -1,9 +1,43 @@
-/* jshint undef: false */
-var chai = require('chai'),
-	request = require('supertest'),
-	server = require('./server').createServer(),
-	assert = chai.assert,
-	expect = chai.expect;
+/* globals describe, it, before, after, afterEach */
+"use strict";
+
+const chai = require('chai');
+const keys = require('when/keys');
+const request = require('supertest');
+const server = require('./server').createServer();
+const assert = chai.assert;
+const expect = chai.expect;
+
+// Create a User record
+function createUser() {
+	return server.sequelize.models.User.create({
+		name: 'Foo Bar',
+		email: 'foo@bar.com'
+	});
+}
+// Create a Task with user
+function createTask(user) {
+	const id = user ? user.get('id') : null;
+
+	return server.models.Task.create({
+		name: 'SubTask',
+		UserId: id
+	});
+}
+
+// Clear the DB
+function clear(done) {
+	return keys.all({
+		users: server.sequelize.models.User.destroy({
+			where: {}
+		}),
+		tasks: server.sequelize.models.Task.destroy({
+			where: {}
+		})
+	}).then(function() {
+		done();
+	}, done);
+}
 
 describe('REST', function() {
 
@@ -131,11 +165,7 @@ describe('REST', function() {
 		});
 
 		afterEach(function(done) {
-			server.sequelize.models.User.destroy({
-				where: {}
-			}).then(function() {
-				done();
-			}, done);
+			clear(done);
 		});
 	});
 
@@ -232,57 +262,52 @@ describe('REST', function() {
 				.expect(400)
 				.end(done);
 		});
+
+		after(function(done) {
+			clear(done);
+		});
 	});
 
 	describe('#findSubResource', function() {
 
 		it('should fetch subResource', function(done) {
-			server.models.Task.create({
-				name: 'SubTask',
-				UserId: 1
-			}).then(function(task) {
-				request(server.app)
-					.get('/users/1/tasks')
-					.expect(200)
-					.expect(function(res) {
-						expect(res.body).to.have.property('result');
-						expect(res.body).to.have.property('meta');
+			createUser().then((user) => {
+				return createTask(user).then((task) => {
+					request(server.app)
+						.get('/users/' + user.get('id') + '/tasks')
+						.expect(200)
+						.expect(function(res) {
+							expect(res.body).to.have.property('result');
+							expect(res.body).to.have.property('meta');
 
-						assert.lengthOf(res.body.result, 1, 'Should have 1 Task');
-						expect(res.body.result[0]).to.have.property('name', 'SubTask');
-					}).end(function(error) {
-						task.destroy().then(function() {
-							done(error);
-						}, done);
-					});
-			}, done);
+							assert.lengthOf(res.body.result, 1, 'Should have 1 Task');
+							expect(res.body.result[0]).to.have.property('id', task.get('id'));
+							expect(res.body.result[0]).to.have.property('name', task.get('name'));
+						}).end(done);
+				});
+			}).catch(done);
+
 		});
 
-	});
-
-	describe('#findSubResource', function() {
-
 		it('should fetch one subResource', function(done) {
-			server.models.Task.create({
-				name: 'SubTask',
-				UserId: 1
-			}).then(function(task) {
-				request(server.app)
-					.get('/users/1/tasks/' + task.id)
-					.expect(200)
-					.expect(function(res) {
+			createUser().then((user) => {
+				return createTask(user).then((task) => {
+					request(server.app)
+						.get('/users/' + user.get('id') + '/tasks/' + task.get('id'))
+						.expect(200)
+						.expect(function(res) {
+							expect(res.body).to.have.property('result');
+							expect(res.body).to.have.property('meta');
 
-						expect(res.body).to.have.property('result');
-						expect(res.body).to.have.property('meta');
+							expect(res.body.result).to.have.property('id', task.get('id'));
+							expect(res.body.result).to.have.property('name', task.get('name'));
+						}).end(done);
+				});
+			}).catch(done);
+		});
 
-						expect(res.body.result).to.have.property('id', task.id);
-						expect(res.body.result).to.have.property('name', 'SubTask');
-					}).end(function(error) {
-						task.destroy().then(function() {
-							done(error);
-						}, done);
-					});
-			}, done);
+		after(function(done) {
+			clear(done);
 		});
 
 	});
@@ -290,52 +315,73 @@ describe('REST', function() {
 	describe('#createSubResources', function() {
 
 		it('should create subResources', function(done) {
-			request(server.app)
-				.put('/users/1/tasks')
-				.send([{
-					name: 'Foo Bar Foo Task'
-				}, {
-					name: 'Foo Bar Foo Task Task'
-				}])
-				.expect(200)
-				.expect(function(res) {
+
+			createUser().then((user) => {
+				request(server.app)
+					.put('/users/' + user.get('id') + '/tasks')
+					.send([{
+						name: 'Foo Bar Foo Task'
+					}, {
+						name: 'Foo Bar Foo Task Task'
+					}])
+					.expect(200)
+					.expect(function(res) {
 						expect(res.body.result).to.have.length(2);
+						
 						expect(res.body.result[0]).to.have.property('name', 'Foo Bar Foo Task');
 						expect(res.body.result[1]).to.have.property('name', 'Foo Bar Foo Task Task');
-				})
-				.end(done);
+					})
+					.end(done);
+			}).catch(done);
 		});
 
+		after(function(done) {
+			clear(done);
+		});
 	});
 
 	describe('#deleteSubResources', function() {
 
 		it('should delete subResource with query params', function(done) {
-			request(server.app)
-				.del('/users/1/tasks/?id=4')
-				.expect(200)
-				.expect(function(res) {
-					assert.deepEqual(res.body, 1);
-				})
-				.end(done);
+			createUser().then((user) => {
+				return createTask(user).then((task) => {
+					request(server.app)
+						.del('/users/' + user.get('id') +  '/tasks/?id=' + task.get('id'))
+						.expect(200)
+						.expect(function(res) {
+							assert.deepEqual(res.body, 1);
+						})
+						.end(done);
+				});
+			}).catch(done);
+
+			
 		});
 
 		it('should delete subResource with id', function(done) {
-			request(server.app)
-				.del('/users/1/tasks/3')
-				.expect(200)
-				.expect(function(res) {
-					assert.deepEqual(res.body, 1);
-				})
-				.end(done);
+			createUser().then((user) => {
+				return createTask(user).then((task) => {
+					request(server.app)
+						.del('/users/' + user.get('id') +  '/tasks/' + task.get('id'))
+						.expect(200)
+						.expect(function(res) {
+							assert.deepEqual(res.body, 1);
+						})
+						.end(done);
+				});
+			}).catch(done);
 		});
 
+		after(function(done) {
+			clear(done);
+		});
 	});
 
 	describe('#update', function() {
 		it('should update model', function(done) {
-			request(server.app)
-				.put('/users/1')
+			createUser().then((user) => {
+				request(server.app)
+				.put('/users/' + user.get('id'))
 				.send({
 					name: 'Foo Bar Foo'
 				})
@@ -343,61 +389,73 @@ describe('REST', function() {
 				.expect(function(res) {
 					expect(res.body).to.have.property('result');
 					expect(res.body).to.have.property('meta');
+
+					expect(res.body.result).to.have.property('id', user.get('id'));
+					expect(res.body.result).to.have.property('name', 'Foo Bar Foo');
 				})
 				.end(done);
+			}).catch(done);
 		});
 
 		it('should update model with an existing updated association', function(done) {
-			request(server.app)
-				.put('/users/1')
-				.send({
-					name: 'Foo Bar Foo',
-					Tasks: [{
-						id: 1,
-						name: 'Foo\'s Task'
-					}]
-				})
-				.expect(200)
-				.expect(function(res) {
-					expect(res.body).to.have.property('result');
-					expect(res.body).to.have.property('meta');
+			createUser().then((user) => {
+				return createTask(user).then((task) => {
+					request(server.app)
+						.put('/users/' + user.get('id'))
+						.send({
+							name: 'Foo Bar Foo',
+							Tasks: [{
+								id: task.get('id'),
+								name: 'Foo\'s Task'
+							}]
+						})
+						.expect(200)
+						.expect(function(res) {
+							expect(res.body).to.have.property('result');
+							expect(res.body).to.have.property('meta');
 
-					var result = res.body.result;
+							var result = res.body.result;
 
-					expect(result).to.have.property('name', 'Foo Bar Foo');
-					expect(result).to.have.property('email', 'foo@bar.com');
+							expect(result).to.have.property('name', 'Foo Bar Foo');
+							expect(result).to.have.property('email', 'foo@bar.com');
 
-					assert.lengthOf(result.Tasks, 1, 'Should have 1 Task');
-					expect(result.Tasks[0]).to.have.property('name', 'Foo\'s Task');
-				})
-				.end(done);
+							assert.lengthOf(result.Tasks, 1, 'Should have 1 Task');
+							expect(result.Tasks[0]).to.have.property('name', 'Foo\'s Task');
+						})
+						.end(done);
+				});
+			}).catch(done);
 		});
 
 		it('should update model with a new association', function(done) {
-			request(server.app)
-				.put('/users/1')
-				.send({
-					name: 'Foo Bar Foo',
-					email: 'Foo@Bar.com',
-					Tasks: [{
-						name: 'Foo\'s new Task'
-					}]
-				})
-				.expect(200)
-				.expect(function(res) {
-					expect(res.body).to.have.property('result');
-					expect(res.body).to.have.property('meta');
+			createUser().then((user) => {
+				return createTask(user).then((task) => {
+					request(server.app)
+						.put('/users/' + user.get('id'))
+						.send({
+							name: 'Foo Bar Foo',
+							Tasks: [{
+								name: 'Foo\'s new Task'
+							}]
+						})
+						.expect(200)
+						.expect(function(res) {
+							expect(res.body).to.have.property('result');
+							expect(res.body).to.have.property('meta');
 
-					var result = res.body.result;
+							var result = res.body.result;
 
-					expect(result).to.have.property('name', 'Foo Bar Foo');
-					expect(result).to.have.property('email', 'Foo@Bar.com');
+							expect(result).to.have.property('name', 'Foo Bar Foo');
+							expect(result).to.have.property('email', 'foo@bar.com');
 
-					assert.lengthOf(result.Tasks, 2, 'Should have 2 Tasks');
-					expect(result.Tasks[1]).to.have.property('name', 'Foo\'s new Task');
-					expect(result.Tasks[0]).to.have.property('name', 'Foo\'s Task');
-				})
-				.end(done);
+							assert.lengthOf(result.Tasks, 2, 'Should have 2 Tasks');
+							expect(result.Tasks[1]).to.have.property('name', 'Foo\'s new Task');
+							expect(result.Tasks[0]).to.have.property('id', task.get('id'));
+							expect(result.Tasks[0]).to.have.property('name', task.get('name'));
+						})
+						.end(done);
+				});
+			}).catch(done);
 		});
 
 		it('should throw model not found', function(done) {
@@ -409,9 +467,20 @@ describe('REST', function() {
 				.expect(404)
 				.end(done);
 		});
+
+		after(function(done) {
+			clear(done);
+		});
 	});
 
 	describe('#delete', function() {
+
+		before(function(done) {
+			createUser().then(() => {
+				done();
+			}).catch(done);
+		});
+
 		it('should delete model', function(done) {
 			request(server.app)
 				.del('/users/1')
@@ -420,7 +489,7 @@ describe('REST', function() {
 					assert.deepEqual(res.body, {}, 'Response should be empty.');
 				})
 				.end(function() {
-					server.sequelize.models.User.find(1).then(function(user) {
+					server.sequelize.models.User.findById(1).then(function(user) {
 						assert.isNull(user, 'User should be null');
 						done();
 					}, done);
@@ -430,8 +499,12 @@ describe('REST', function() {
 		it('should throw model not found', function(done) {
 			request(server.app)
 				.del('/users/10')
-				.expect(400)
+				.expect(404)
 				.end(done);
+		});
+
+		after(function(done) {
+			clear(done);
 		});
 	});
 

@@ -1,7 +1,13 @@
+"use strict";
+
 var Deserializer = require('../../../lib/deserializer');
 
-module.exports = Deserializer.extend({
-	deserialize: function (adapter, type, payload) {
+class DeserializerMock extends Deserializer {
+
+	deserialize(adapter, type, payload) {
 		return payload;
 	}
-});
+
+}
+
+module.exports = DeserializerMock;

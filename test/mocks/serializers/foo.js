@@ -1,7 +1,13 @@
-var Serializer = require('../../../lib/deserializer');
+"use strict";
 
-module.exports = Serializer.extend({
-	serialize: function (adapter, type, payload) {
+var Serializer = require('../../../lib/serializer');
+
+class SerializerMock extends Serializer {
+
+	deserialize(adapter, type, payload) {
 		return payload;
 	}
-});
+
+}
+
+module.exports = SerializerMock;

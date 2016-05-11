@@ -1,18 +1,19 @@
-/* jshint undef: false */
-var chai = require('chai'),
-	database = require('./server').connect(),
-	RestService = require('../lib/rest-service');
+/* globals describe, it, beforeEach, after */
+"use strict";
 
-var chaiAsPromised = require('chai-as-promised');
+const chai = require('chai');
+const database = require('./server').connect();
+const RestService = require('../lib/rest-service');
+
+const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 
-var assert = chai.assert,
-	expect = chai.expect;
+const assert = chai.assert;
+const expect = chai.expect;
 
-var Service = RestService.create({
-	sequelize: database.sequelize
-}), User = database.models.User,
-	Task = database.models.Task;
+const Service = new RestService(database.sequelize);
+const User = database.models.User;
+const Task = database.models.Task;
 
 describe('RestService', function() {
 
@@ -161,7 +162,7 @@ describe('RestService', function() {
 		});
 
 		it('should persist new model with `hasMany` relation', function(done) {
-			var promise = Service.persist(User, {
+			const promise = Service.persist(User, {
 				name: 'New Foo',
 				Tasks: [{
 					name: 'Task'
@@ -188,13 +189,14 @@ describe('RestService', function() {
 			expect(promise).to.eventually.have.property("id", 1).notify(done);
 		});
 
-		it('should reject as the related model does not exist', function() {
-			var promise = Service.persist(User, {
+		it('should reject as the related model does not exist', function(done) {
+			const promise = Service.persist(User, {
 				name: 'New User',
 				Tasks: [5]
 			});
 
-			return assert.isRejected(promise);
+			assert.isFulfilled(promise);
+			expect(promise).to.eventually.have.property("name", 'New User').notify(done);
 		});
 
 	});
@@ -244,21 +246,19 @@ describe('RestService', function() {
 
 		it('should throw unknown handler', function() {
 			assert.throws(function() {
-				var MyService = RestService.extend({
-					createAssociation: 'bar'
-				});
+				class MyService extends RestService {
+					get createAssociation() {
+						return 'bar';
+					}
+				}
 
-				var service = MyService.create({
-					sequelize: database.sequelize
-				});
+				const service = new MyService(database.sequelize);
 
 				service.resolveAssociationHandler('Bar');
-			}, 'Can not find Association Handler for keys `[createBarAssociation, createAssociation]`.');
+			}, 'Can not find Association Handler for keys [createBarAssociation, createAssociation].');
 		});
 
 	});
-
-
 
 	// Delete the database file, just in case :)
 	after(function(done) {

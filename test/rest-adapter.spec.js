@@ -1,61 +1,60 @@
-/* jshint undef: false */
-var chai = require('chai'),
-	database = require('./server').connect(),
-	RestService = require('../lib/rest-service'),
-	RestAdapter = require('../lib/rest-adapter');
+/* globals describe, it */
+"use strict";
 
-var chaiAsPromised = require('chai-as-promised');
+const chai = require('chai');
+const database = require('./server').connect();
+const RestService = require('../lib/rest-service');
+const RestAdapter = require('../lib/rest-adapter');
+
+const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 
-var assert = chai.assert,
-	expect = chai.expect,
-	FooService = RestService.extend({});
+const assert = chai.assert;
 
-var Adapter = RestAdapter.create({
-	sequelize: database.sequelize
-}), User = database.models.User,
-	Task = database.models.Task;
+const Adapter = new RestAdapter(database.sequelize);
+const User = database.models.User;
+const Task = database.models.Task;
 
 describe('RestAdapter', function() {
 
 	describe('#serviceFor', function() {
 
 		it('should resolve default service', function() {
-			var service = Adapter.serviceFor('users');
+			const service = Adapter.serviceFor('users');
 
 			assert.instanceOf(service, RestService, 'Should be an instance of RestService');
-			//assert.deepEqual(service, Adapter.serviceFor('users'), 'Service should be equal.');
+			assert.deepEqual(service, Adapter.serviceFor('users'), 'Service should be equal.');
 		});
 
 		it('should resolve Foo service', function() {
-			var service = Adapter.serviceFor('foos');
+			const service = Adapter.serviceFor('foos');
 
 			assert.instanceOf(service, RestService, 'Should be an instance of RestService');
-			//assert.deepEqual(service, Adapter.serviceFor('foos'), 'Service should be equal.');
+			assert.deepEqual(service, Adapter.serviceFor('foos'), 'Service should be equal.');
 		});
 
 		it('should throw error', function() {
 			assert.throw(function() {
 				Adapter.serviceFor(function() {});
-			}, 'Type name must be a String or a Sequelize Model. You passed a `function`.');
+			}, 'Type name must be a String or a Sequelize Model. You passed a \'function\'.');
 
 			assert.throw(function() {
 				Adapter.serviceFor(1);
-			}, 'Type name must be a String or a Sequelize Model. You passed a `number`.');
+			}, 'Type name must be a String or a Sequelize Model. You passed a \'number\'.');
 
 			assert.throw(function() {
 				Adapter.serviceFor({});
-			}, 'Type name must be a String or a Sequelize Model. You passed a `object`.');
+			}, 'Type name must be a String or a Sequelize Model. You passed a \'object\'.');
 
 			assert.throw(function() {
 				Adapter.serviceFor([]);
-			}, 'Type name must be a String or a Sequelize Model. You passed a `object`.');
+			}, 'Type name must be a String or a Sequelize Model. You passed a \'object\'.');
 		});
 	});
 
 	describe('#modelFor', function() {
 		it('should resolve a model as a String', function() {
-			var msg = 'Should be an instance of a Model';
+			const msg = 'Should be an instance of a Model';
 			assert.instanceOf(User, database.Sequelize.Model, msg);
 			assert.instanceOf(Task, database.Sequelize.Model, msg);
 
@@ -64,7 +63,8 @@ describe('RestAdapter', function() {
 		});
 
 		it('should resolve a model as a Model', function() {
-			var msg = 'Should be an instance of a Model';
+			const msg = 'Should be an instance of a Model';
+
 			assert.instanceOf(Adapter.modelFor('users'), database.Sequelize.Model, msg);
 			assert.instanceOf(Adapter.modelFor('TASKS'), database.Sequelize.Model, msg);
 			assert.instanceOf(Adapter.modelFor('FoOs'), database.Sequelize.Model, msg);
@@ -73,23 +73,23 @@ describe('RestAdapter', function() {
 		it('should throw error', function() {
 			assert.throw(function() {
 				Adapter.modelFor('bars');
-			}, 'Could not find Model for type `bars`.');
+			}, 'Could not find Model for type bars.');
 
 			assert.throw(function() {
 				Adapter.modelFor(function() {});
-			}, 'Type must be a String or a Sequelize Model. You passed a `function`.');
+			}, 'Type must be a String or a Sequelize Model. You passed a \'function\'.');
 
 			assert.throw(function() {
 				Adapter.modelFor(1);
-			}, 'Type must be a String or a Sequelize Model. You passed a `number`.');
+			}, 'Type must be a String or a Sequelize Model. You passed a \'number\'.');
 
 			assert.throw(function() {
 				Adapter.modelFor({});
-			}, 'Type must be a String or a Sequelize Model. You passed a `object`.');
+			}, 'Type must be a String or a Sequelize Model. You passed a \'object\'.');
 
 			assert.throw(function() {
 				Adapter.modelFor([]);
-			}, 'Type must be a String or a Sequelize Model. You passed a `object`.');
+			}, 'Type must be a String or a Sequelize Model. You passed a \'object\'.');
 		});
 	});
 

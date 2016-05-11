@@ -1,5 +1,11 @@
+"use strict";
+
 var RestService = require('../../../lib/rest-service');
 
-module.exports = RestService.extend({
+class RestServiceMock extends RestService {
 
-});
+
+
+}
+
+module.exports = RestServiceMock;
