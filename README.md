@@ -177,7 +177,7 @@ class MyResolver extends RestSequelize.Resolver {
             case 'serializers': return RestSequelize.Serializer;
             case 'deserializers': return RestSequelize.Deserializer;
             default:
-                throw new Error(`Could not resolve with type '${type}' and name ${name}`);
+                throw new Error(`Could not resolve Factory with type '${type}' and name ${name}`);
         }
     }
 };
