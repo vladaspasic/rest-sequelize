@@ -188,7 +188,7 @@ describe('REST', function() {
 				.end(done);
 		});
 
-		it('should create model with association', function(done) {
+		it('should not create model with an unsaved association', function(done) {
 			request(server.app)
 				.post('/users')
 				.send({
@@ -207,53 +207,56 @@ describe('REST', function() {
 					expect(result).to.have.property('name', 'Foo Bar');
 					expect(result).to.have.property('email', 'foo@bar.com');
 
-					assert.lengthOf(result.Tasks, 1, 'Should have 1 Task');
-					expect(result.Tasks[0]).to.have.property('name', 'Simple Task');
+					assert.lengthOf(result.Tasks, 0, 'Should have 0 Tasks');
 				})
 				.end(done);
 		});
 
 		it('should create model with existing association as an object', function(done) {
-			request(server.app)
-				.post('/users')
-				.send({
-					name: 'Foo Bar 2',
-					email: 'foo2@bar.com',
-					Tasks: [{
-						id: 1
-					}]
-				})
-				.expect(201)
-				.expect(function(res) {
-					expect(res.body).to.have.property('result');
-					expect(res.body).to.have.property('meta');
+			
+			createTask().then((task) => {
+				request(server.app)
+					.post('/users')
+					.send({
+						name: 'Foo Bar 2',
+						email: 'foo2@bar.com',
+						Tasks: [{
+							id: task.get('id')
+						}]
+					})
+					.expect(201)
+					.expect(function(res) {
+						expect(res.body).to.have.property('result');
+						expect(res.body).to.have.property('meta');
 
-					expect(res.body.result).to.have.property('name', 'Foo Bar 2');
-					expect(res.body.result).to.have.property('email', 'foo2@bar.com');
-				})
-				.end(done);
+						expect(res.body.result).to.have.property('name', 'Foo Bar 2');
+						expect(res.body.result).to.have.property('email', 'foo2@bar.com');
+						assert.lengthOf(res.body.result.Tasks, 1, 'Should have 1 Task');
+						expect(res.body.result.Tasks[0]).to.have.property('id', task.get('id'));
+
+					}).end(done);
+			});
 		});
 
 		it('should create a new Task with association', function(done) {
-			request(server.app)
-				.post('/tasks')
-				.send({
-					name: 'New Task',
-					User: {
-						name: 'Task Owner',
-						email: 'foo@bar.com'
-					}
-				})
-				.expect(201)
-				.expect(function(res) {
-					expect(res.body).to.have.property('result');
-					expect(res.body).to.have.property('meta');
+			createUser().then((user) => {
+				request(server.app)
+					.post('/tasks')
+					.send({
+						name: 'New Task',
+						User: user.toJSON()
+					})
+					.expect(201)
+					.expect(function(res) {
+						expect(res.body).to.have.property('result');
+						expect(res.body).to.have.property('meta');
 
-					expect(res.body.result).to.have.property('name', 'New Task');
-					expect(res.body.result.User).to.have.property('name', 'Task Owner');
-					expect(res.body.result.User).to.have.property('email', 'foo@bar.com');
-				})
-				.end(done);
+						expect(res.body.result).to.have.property('name', 'New Task');
+						expect(res.body.result.User).to.have.property('name', user.get('name'));
+						expect(res.body.result.User).to.have.property('email', user.get('email'));
+					})
+					.end(done);
+			}).catch(done);
 		});
 
 		it('should throw bad request', function(done) {
@@ -420,14 +423,15 @@ describe('REST', function() {
 							expect(result).to.have.property('email', 'foo@bar.com');
 
 							assert.lengthOf(result.Tasks, 1, 'Should have 1 Task');
-							expect(result.Tasks[0]).to.have.property('name', 'Foo\'s Task');
+							// should not update sub record props
+							expect(result.Tasks[0]).to.have.property('name', task.get('name'));
 						})
 						.end(done);
 				});
 			}).catch(done);
 		});
 
-		it('should update model with a new association', function(done) {
+		it('should update model and ignore new associated record', function(done) {
 			createUser().then((user) => {
 				return createTask(user).then((task) => {
 					request(server.app)
@@ -436,7 +440,7 @@ describe('REST', function() {
 							name: 'Foo Bar Foo',
 							Tasks: [{
 								name: 'Foo\'s new Task'
-							}]
+							}, task.toJSON() ]
 						})
 						.expect(200)
 						.expect(function(res) {
@@ -448,8 +452,7 @@ describe('REST', function() {
 							expect(result).to.have.property('name', 'Foo Bar Foo');
 							expect(result).to.have.property('email', 'foo@bar.com');
 
-							assert.lengthOf(result.Tasks, 2, 'Should have 2 Tasks');
-							expect(result.Tasks[1]).to.have.property('name', 'Foo\'s new Task');
+							assert.lengthOf(result.Tasks, 1, 'Should have 1 Task');
 							expect(result.Tasks[0]).to.have.property('id', task.get('id'));
 							expect(result.Tasks[0]).to.have.property('name', task.get('name'));
 						})

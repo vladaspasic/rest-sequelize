@@ -165,17 +165,39 @@ describe('RestService', function() {
 			const promise = Service.persist(User, {
 				name: 'New Foo',
 				Tasks: [{
-					name: 'Task'
+					name: 'New Task record'
 				}]
 			});
 
 			assert.isFulfilled(promise);
 			expect(promise).to.eventually.have.property("name", 'New Foo');
-			expect(promise).to.eventually.have.deep.property("Tasks[0].name", 'Taskssss');
+			expect(promise).to.eventually.have.deep.property("Tasks[0].name", 'New Task record');
 			expect(promise).to.eventually.have.property("id", 4).notify(done);
 		});
 
-		it('should persist new model with `belongsTo` relation', function(done) {
+		it('should persist new model with an existing `belongsTo` relation', function(done) {
+			var promise = Service.persist(User, {
+				email: 'foo@bar.com',
+				name: 'Foo'
+			}).then((user) => {
+				return Service.persist(Task, {
+					name: 'New Task',
+					User: user.toJSON()
+				});
+			}).then((task) => {
+				return Service.findOne(Task, {
+					where: {id: task.get('id')}
+				});
+			});
+
+			assert.isFulfilled(promise);
+			expect(promise).to.eventually.have.property("id", 1);
+			expect(promise).to.eventually.have.property("name", 'New Task');
+			expect(promise).to.eventually.have.deep.property("User.name", 'Foo');
+			expect(promise).to.eventually.have.deep.property("User.email", 'foo@bar.com').notify(done);
+		});
+
+		it('should persist new model with a new `belongsTo` relation being ignored', function(done) {
 			var promise = Service.persist(Task, {
 				name: 'New Task',
 				User: {
@@ -185,18 +207,22 @@ describe('RestService', function() {
 
 			assert.isFulfilled(promise);
 			expect(promise).to.eventually.have.property("name", 'New Task');
-			expect(promise).to.eventually.have.deep.property("User[0].name", 'New User');
-			expect(promise).to.eventually.have.property("id", 1).notify(done);
+			expect(promise).to.eventually.not.have.deep.property("User").notify(done);
 		});
 
-		it('should reject as the related model does not exist', function(done) {
+		it('should create model and ignore related model as it does not exist', function(done) {
 			const promise = Service.persist(User, {
 				name: 'New User',
-				Tasks: [5]
+				Tasks: [ { id: 5 } ]
+			}).then((user) => {
+				return Service.findOne(User, {
+					where: {id: user.get('id')}
+				});
 			});
 
-			assert.isFulfilled(promise);
-			expect(promise).to.eventually.have.property("name", 'New User').notify(done);
+			expect(promise).to.eventually.have.property("name", 'New User');
+			expect(promise).to.eventually.have.property("email", null);
+			expect(promise).to.eventually.have.property("Tasks").to.be.empty.notify(done);
 		});
 
 	});
@@ -226,36 +252,6 @@ describe('RestService', function() {
 			Service.populate(database.models.Foo, query);
 
 			assert.lengthOf(query.include, 0, 'Should contain no associations');
-		});
-
-	});
-
-	describe('#resolveAssociationHandler', function() {
-
-		it('should resolve create handler', function() {
-			var handler = Service.resolveAssociationHandler('User');
-
-			assert.typeOf(handler, 'function', 'Should be a function');
-		});
-
-		it('should resolve update handler', function() {
-			var handler = Service.resolveAssociationHandler('User', 1);
-
-			assert.typeOf(handler, 'function', 'Should be a function');
-		});
-
-		it('should throw unknown handler', function() {
-			assert.throws(function() {
-				class MyService extends RestService {
-					get createAssociation() {
-						return 'bar';
-					}
-				}
-
-				const service = new MyService(database.sequelize);
-
-				service.resolveAssociationHandler('Bar');
-			}, 'Can not find Association Handler for keys [createBarAssociation, createAssociation].');
 		});
 
 	});
