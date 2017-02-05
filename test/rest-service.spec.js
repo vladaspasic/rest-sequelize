@@ -82,7 +82,7 @@ describe('RestService', function() {
 
 		it('should be rejected', function(done) {
 			var find = Service.findOne(User, {
-				where: {id: 5}
+				where: {id: 100}
 			});
 
 			assert.isRejected(find).notify(done);
