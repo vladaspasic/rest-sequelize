@@ -1,6 +1,6 @@
 {
   "name": "rest-sequelize",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "REST Service using Sequelize ORM",
   "main": "index.js",
   "repository": {
